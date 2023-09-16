@@ -1,8 +1,8 @@
-# ArchKatas
+# RoadWarrior
 
-## O'Reilly Architecture Katas Summer 2023
+## O'Reilly Architecture Katas - September 2023
 
-This is a team submission for [O'Reilly Architecture Katas Summer 2023](https://learning.oreilly.com/featured/architectural-katas/).
+This is a team submission for [O'Reilly Architecture Katas September 2023](https://learning.oreilly.com/featured/architectural-katas/).
 
 ### Team Members
 
@@ -306,156 +306,339 @@ Given the shared database between the ETL and Rewards service, the system archit
 
 ## Components
 
-The following section describes the internal components of each microservice identified the previous section
+The following section describes the internal components of each microservice identified the previous section:
 
-### Identity and Access Manager
+1. **Identity and Access Manager:** Handling user registration, login, and access management.
+2. **Profile Manager:** Managing the user's profile and preferences.
+3. **Reservation Manager:** Handling reservations, including manual entries and those from emails.
+4. **Travel Manager:** Interfacing with SABRE, APOLLO, and other systems to get live updates.
+5. **Support Manager:** Facilitating user requests for support from the travel agency.
+6. **Social Sharing Manager:** Handling sharing of trip details to social media.
+7. **Reporting and Analytics Manager:** Generating end-of-year reports and analytical data.
 
-The **Identity and Access Manager (IAM)** plays a critical role in managing and securing access to resources within a system architecture. IAM is a crucial component of cybersecurity and ensures that only authorized users and entities can access the system's resources while maintaining the principle of least privilege. Here are the key responsibilities and functions of an Identity and Access Manager within a system architecture:
+### Identity and Access Manager (IAM)
 
-**User Identity Management:**
+The Identity and Access Manager is a critical component of the RoadWarrior platform. It manages user identities and their respective permissions to ensure that only authorized individuals can access specific functionalities within the application. Given the user base and requirements, the IAM is expected to handle a high volume of authentication and authorization requests efficiently.
 
-- Create and manage user accounts: IAM administrators create, update, and deactivate user accounts as needed.
-- Maintain user profiles: IAM ensures that user profiles are accurate and up-to-date, reflecting each user's role and permissions.
+#### IAM Sub-Components and Functionalities
 
-**Authentication:**
+1. **User Registration and Authentication:**
+   - **User Database:** Stores user credentials (hashed passwords, salt) and other essential user identification information.
+   - **Authentication API:** Provides endpoints for user registration, login, and logout. It'll handle username/password-based authentication, possibly integrating with OAuth or OIDC providers for social logins.
+   - **Token Service:** Generates and validates tokens (like JWT) after successful authentication, ensuring secure and stateless sessions.
 
-- Implement authentication mechanisms: IAM manages the authentication process, which verifies the identity of users and entities trying to access the system. Common methods include passwords, multi-factor authentication (MFA), and biometrics.
-- Secure authentication tokens: IAM ensures that authentication tokens (e.g., session cookies) are secure to prevent unauthorized access.
+2. **Authorization:**
+   - **Role Database:** Defines roles such as "Registered User," "Premium User," or "Admin." Each role has specific permissions associated with it.
+   - **Authorization Middleware:** Intercepts incoming requests, verifies the provided token, and checks the user's role against required permissions.
 
-**Authorization:**
+3. **Password Management:**
+   - **Password Reset Module:** Provides endpoints for users to reset forgotten passwords, typically involving email verification.
+   - **Password Policy Enforcer:** Ensures that users' passwords comply with security standards, such as minimum length, requiring special characters, and so on.
 
-- Define access control policies: IAM administrators create and enforce access control policies that determine who can access what resources and under what conditions.
-- Role-based access control (RBAC): IAM often implements RBAC, where users are assigned roles with specific permissions based on their job functions.
-- Fine-grained access control: IAM may also support more granular access control policies, allowing for precise control over resource access.
+4. **Multi-Factor Authentication (MFA):**
+   - **MFA Module:** Enhances security by requiring users to provide multiple forms of identification before accessing their accounts. Typically involves SMS verification or authenticator apps.
+   - **MFA Database:** Stores data related to MFA like backup codes, registered devices, etc.
 
-**Access Provisioning and Deprovisioning:**
+5. **Session Management:**
+   - **Session Handler:** Provides functionalities like checking active sessions, logging out from all devices, or renewing session tokens.
+   - **Session Database:** Stores active sessions, associated tokens, and expiration timestamps.
 
-- Automate user provisioning: IAM can automate the process of granting access to new users, ensuring they have the necessary permissions from the start.
-- Deactivation and deprovisioning: When users leave the organization or no longer require access, IAM ensures that their accounts and permissions are promptly revoked.
+6. **Access Logs and Audit:**
+   - **Audit Logger:** Logs all authentication and authorization attempts, both successful and unsuccessful, for security analysis and compliance.
+   - **Log Database:** A dedicated storage for logs, ensuring they're tamper-proof and retained for an appropriate duration as per compliance needs.
 
-**Audit and Compliance:**
+7. **Rate Limiting and Security:**
+   - **Rate Limiter:** Limits the number of login attempts from a single IP or for a specific user to prevent brute force attacks.
+   - **Security Module:** Monitors for suspicious activities, like rapid succession login attempts, logins from new locations, and can temporarily lock accounts or require additional verification.
 
-- Logging and monitoring: IAM logs user activities and access attempts for auditing purposes, helping organizations maintain compliance with security regulations.
-- Compliance enforcement: IAM can enforce compliance policies and ensure that access control measures align with regulatory requirements.
+8. **Integration Adapters:**
+   - **Social Login Adapters:** Provides seamless integration with external identity providers like Google, Facebook, etc., for quick registrations and logins.
+   - **Enterprise Single Sign-On (SSO):** For users associated with business accounts, provides SSO capabilities to integrate with enterprise authentication systems.
 
-**Single Sign-On (SSO):**
-
-- Provide SSO capabilities: IAM can enable SSO solutions, allowing users to access multiple applications with a single set of credentials, enhancing user convenience and security.
-
-**Password Management:**
-
-- Password policies: IAM enforces password policies, such as complexity requirements and password rotation, to enhance security.
-- Password reset and recovery: IAM often provides self-service mechanisms for users to reset or recover their passwords securely.
-
-**Access Reviews:**
-
-- Periodic access reviews: IAM may facilitate periodic reviews of user access rights to identify and address any unauthorized or unnecessary permissions.
-
-**Security Integration:**
-
-- Integration with security tools: IAM systems often integrate with other security solutions, such as intrusion detection systems and SIEM (Security Information and Event Management) platforms, to enhance overall security posture.
+Given the vast user base and the need to provide real-time updates, this IAM must be highly available, scalable, and should work seamlessly with other components like the Profile Manager and Email Polling Manager. It's essential to keep the IAM system's latency low to ensure quick login and access times, meeting the performance requirements specified earlier.
 
 ![IAM](/Diagrams/IAM.png)
 *Figure 10 Identity & Access Manager*
 
 ### Profile Manager
 
-The profile manager is responsible for creating and maintaining the public profile for all users. Once an account is provisioned and the user logs in, a default profile automatically created and the user is directed to update it.
-The service encapsulates a query based CRUD component to make the profile changes requested by the user.
-Besides this, we also apply profile updates that happen due to various events triggered within the system as a result of user actions. See [ADR05-CQRS-EventSourcing](/ADRs/ADR05-CQRS-EventSourcing.md)
+The Profile Manager component is pivotal for personalizing user experiences in the RoadWarrior platform. It retains and manages user profiles, preferences, past trips, and other personalized data. The system ensures that users have a consistent experience whether they're accessing RoadWarrior through the web or mobile devices.
+
+#### Profile Manager Sub-Components and Functionalities
+
+1. **User Profile Storage:**
+   - Profile Database: A dedicated storage system that keeps user-related data such as name, email, contact details, profile picture, and other metadata.
+   - History Database: Archives of past trips, reservations, and activities carried out by the user on the platform.
+
+2. **Profile CRUD API:**
+   - CRUD Endpoints: Provides the necessary interfaces for creating, reading, updating, and deleting user profile details.
+   - Profile Validator: Ensures data consistency and validation, such as verifying phone numbers or standardizing address formats.
+
+3. **Preference Management:**
+   - Preference Handler: Manages user-specific settings like language preferences, notification settings, and theme choices.
+   - Preference Database: A storage system that archives user-specific preferences.
+
+4. **Trip History and Archiver:**
+   - History Logger: Tracks and logs user activity related to travel, such as bookings, cancellations, and updates.
+   - Archiver: Periodically moves completed trip details from the main profile view to a historical view for cleaner user experience.
+
+5. **Integrations with Other Managers:**
+   - IAM Integration: Ensures that any request to modify profile data is from authenticated and authorized users.
+   - Booking Data Integrator: Gathers data from the Third-Party Travel APIs Manager and the Email Polling Manager to continuously update the user's trip details.
+
+6. **User Feedback and Support:**
+   - Feedback Handler: Allows users to provide feedback on their experiences, suggesting improvements or reporting issues.
+   - Support Request Integrator: Integrates with Booking Support Manager to resolve any profile-related concerns or queries.
+
+7. **Notifications and Alerts:**
+   - Notification Engine: Manages and sends real-time notifications to users based on their preferences.
+   - Alert Database: Tracks and archives past alerts and notifications sent to the user.
+
+8. **Security and Data Privacy:**
+   - Data Encryption Module: Ensures that sensitive user profile data is encrypted both in transit and at rest.
+   - Data Retention Policies: Regularly audits and deletes data that's no longer necessary, adhering to data privacy standards and regulations.
+
+With millions of active users, the Profile Manager must ensure data integrity, quick access times, and high availability. Integration with other components ensures a seamless user experience, be it updating profile details, reviewing past trips, or setting platform preferences. The design must uphold the principles of user data privacy and ensure timely synchronization with other system components.
 
 ![Profile Manager](/Diagrams/profile.png)
 *Figure 11 Profile Manager*
 
-### Connections Manager
+### Reservation Manager
 
-The connection manager is the most intricate part of the system. The need for it to be horizantally scalable is crucial given the amount of real time connections and requests it will handle at scale from all over the United States.
-In our proposed architecture, each instance of the Connections manager service will serve requests from multiple zip codes.
-The service itself comprises of an Orchestrator component and a message processor. The Orchestrator keeps track of free and busy websocket connections by getting notifications from the Message Processor.
+The Reservation Manager is central to the Road Warrior platform as it manages all reservations for the user, whether manually entered or sourced from email polling.
+
+#### Reservation Manager Sub-Components and Functionalities
+
+1. **Email Poller Sub-Component**
+   - Poller Scheduler: Initiates regular checks for new travel-related emails.
+   - Email Filter Engine: Scans emails, discarding irrelevant ones and forwarding travel-related emails to the Processor.
+   - Email Processor: Extracts relevant reservation details from emails and converts them to a standardized format for storage.
+
+2. **Manual Entry Interface**
+   - Form UI: Presents the user with an interface to manually input reservation details.
+   - Input Validator: Checks user inputs for accuracy and completeness.
+   - Data Sanitizer: Ensures the manually entered data is free from potential security threats.
+
+3. **Reservation Database Interface**
+   - Data Mapper: Converts raw reservation data into a format suitable for database storage.
+   - CRUD Operations Module: Handles Create, Read, Update, and Delete operations for the reservations in the database.
+   - Cache Manager: Temporarily stores frequently accessed reservations for faster retrieval.
+
+4. **Trip Grouping Logic**
+   - Trip Identifier: Determines which reservations belong to a specific trip based on dates, destinations, and other related data.
+   - Grouping Module: Organizes reservations under the identified trips for a more cohesive view.
+   - Trip Completion Detector: Monitors the trip dates and marks the trip as complete post the return date.
+
+5. **Reservation Update Listener**
+   - Event Listener: Watches for real-time updates relevant to a user's reservations.
+   - Update Processor: Upon receiving an update, processes and reflects it in the user's reservations.
+   - Notification Dispatcher: Informs the user about critical updates, e.g., cancellations or gate changes.
+
+6. **Data Export/Import Module**
+   - Data Serializer: Converts reservation data into formats suitable for exporting, such as JSON or XML.
+   - Data Deserializer: Converts imported data into a format suitable for processing and storage.
+
+7. **Security & Compliance Layer**
+   - Data Encryption: Ensures that sensitive reservation details are encrypted at rest and in transit.
+   - Regulation Compliance Checker: Ensures any stored or processed reservation adheres to travel and data protection regulations.
+
+8. **Integration Adapters**
+   - Email Service Adapter: Facilitates communication between the Reservation Manager and the email service being used.
+   - External Reservation Systems Adapter: Facilitates integration with other reservation systems if needed in the future.
+
+The Reservation Manager provides a comprehensive approach to efficiently handle and present reservations to users while ensuring high reliability, accuracy, and timeliness.
 
 ![Connections Manager](/Diagrams/connection.png)
 *Figure 12 Connections Manager*
 
-The following sections describes the overall workflow, the differences between how the server and app handle citizen and officer requests should be noted
+### Travel Manager
 
-**Location Tracking**
+The Travel Manager is responsible for ensuring that all travel-related details are up-to-date by interfacing with external travel systems like SABRE, APOLLO, and others. This component ensures that users are kept informed about any changes to their travel plans in real time.
 
-- Officer turns on location services and makes themselves available for connection within a 15 minute window via the client app
-- App makes a GET request recieved by the orchestrator component on behalf of the officer. The request must include officer's current geolocation (Lat,Long),zipcode and sufficent information to uniquely identify the account and profile (AccountID, ProfileID). If the zipcode is not included in the request, the server will be responsible for mapping the geolocation to a zip code
-- Orchestrator determines the request is coming from an officer (separate endpoints for officer and citizen is one way of achieving this)
-- Orchestrator responds with the url of a free connection websocket connection
-- Orchestrator creates a record of a busy connection in it's local database of a tuple comprising the websocket url and the Officer's profile ID
-- App on the Officer's device establishes a websocket connection to the url provided in the previous step.
-- App sends the officer's location over the websocket connection whenever it detects a location change from the location services
-- Message processor stores and updates the the location of the officer in a geolocation clustered, in-memory graph database [ADR06](/ADRs/ADR06-InMemory-Graph-Store-For-location-lookup.md)
-- App on citizen device makes a GET request recieved by the orchestrator component when it detects a location change. The request must include citizen's current geolocation (Lat,Long),zipcode and sufficent information to uniquely identify the account and profile (AccountID, ProfileID). If the zipcode is not included in the request, the server will be responsible for mapping the geolocation to a zip code
-- Orchestrator determines the request is coming from an citizen (separate endpoints for officer and citizen is one way of achieving this)
-- Orchestrator responds with the url of a free connection websocket connection
-- Orchestrator creates a record of a busy connection in it's local database of a tuple comprising the websocket url and the Citizen's profile ID
-- App on the Citizen's device establishes a websocket connection to the url provided in the previous step.
-- App sends location updates to the server over the websocket connection, message processor looks up the location of the closest police officer from the in-memory graph store and sends it over the same connection, along with other relevant profile data.
-- The message processor is responsible for removing the officer's location from the in-memory cache once the app notifies with a message. Once the 15 minute window expires the websocket connection is closed and the orchestrator is notified. Orchestrator removes the tuple it added earlier from it's local db.
+#### Travel Manager Sub-Components and Functionalities
 
-The workflow described above is illustrated in the following sequence diagram
+1. **External System Interface**
+   - System Connector: Establishes and maintains connections with external travel systems, such as SABRE and APOLLO.
+   - Data Fetcher: Periodically retrieves data or listens for real-time updates from these systems.
+   - Data Mapper: Converts data from the external systems into a format suitable for internal processing and storage.
 
-![connectionWorkflow](/Diagrams/connectionSeq.png)
-*Figure 13 Connection Workfkow*
+2. **Update Processor**
+   - Change Detector: Compares the fetched data with stored reservation details to identify any changes or updates.
+   - Data Updater: Modifies the existing reservations in the system database with the detected changes.
+   - Conflict Resolver: Handles any discrepancies between stored reservation details and the updates received, flagging manual checks if necessary.
 
-**Proximity Detection**
-Proximity detection can happen in of two ways
+3. **Notification Dispatcher**
+   - User Notifier: Informs the user about critical updates like delays, cancellations, gate changes, etc.
+   - Channel Selector: Chooses the most appropriate channel (app notification, email, SMS) based on user preferences and urgency of the update.
 
-1. Bluetooth based proximity detection, similar to how Covid Tracking apps work
-2. Calculating proximity on the server
+4. **System Synchronization Logic**
+   - Sync Scheduler: Sets regular intervals for checking updates to keep the data as current as possible.
+   - Real-time Listener: An event-driven approach where the manager listens for real-time updates instead of polling at regular intervals.
+   - Fault Tolerance Mechanism: Ensures the synchronization process continues smoothly even if there are temporary outages or interruptions with the external systems.
 
-Bluetooth based proximity detection does not require a constantly sending and recieving location updates from the web server. APIs for background services exist on both Android and iOS, that can run even when the app is closed and send notifications to the user (See the next section about handling notifications). Such services can be programmed to periodically check for nearby bluetooth devices and obtain their bluetooth UUID. This UUID can then be sent to the server to determine if the device has the app installed and request the profile of the associated user. This will also require the user profiles or accounts on the server to be mapped to the UUIDs, and keep them updated, since UUIDs can be randomly generated.
+5. **Security & Compliance Layer**
+   - Data Encryption: Ensures that sensitive travel update details are encrypted at rest and in transit.
+   - API Security Measures: Implements standards like OAuth for authenticating and authorizing communication with external systems.
 
-The other method is to calculate proximity on the server and then allow the citizen to request a connection when they are within the threshold. There are a couple of benefits to this latter approach
+6. **Integration Adapters**
+   - Protocol Adapters: Converts data formats and communication protocols to be compatible with various external systems.
+   - Error Handler: Manages any errors or exceptions raised during integration, logging them for further analysis.
 
-1. User's bluetooth need not be on at all times
-2. Since both officer and citizen geolocations are being tracked, they can be rendered on a map, enhancing usability. The will not be possible with device detected proximity
+7. **Analytics & Metrics Collector**
+   - Update Frequency Analyzer: Tracks how often travel details are updated for analytical purposes.
+   - Vendor Preference Detector: Analyzes updates to determine preferences in airlines, hotels, or car rentals.
 
-As mentioned earlier, we proposed using graph data structures to store and lookup officer locations on the server. Using graphs makes proximity calculation faster when compared to a table based lookup at the expense of lower performance when adding or removing locations from the graph.
+The Travel Manager ensures that users receive timely and accurate information about their reservations, fostering trust in the platform's capability to keep them informed.
 
-![latlonggraph](/Diagrams/latlongGraph.png)
-*Figure 14 Geolocation Graph*
-
-**Handling Notifications**
-Our architecture recommends using device triggered notifications along with server pushed notifications (See  [ADR07-Device trigerred notifications](/ADRs/ADR07-Device-triggered-notifications.md)).
-The relevant classes for background services are subclasses of UNNotificationTrigger (swift) on iOS and the Service (java) class on Android.
-
-**Establishing Connection**
-Once a citizen is notified they are close to an officer accepting connections, they can request a connection via the App UI, which triggers another Http request to the orchestrator. The orchestrator sends a notification to the officer's device either through a cloud based messaging service, or through the open websocket channel. If the officer accepts, the app requests the Orchestrator to register a successful connection and put an event on the "Established connections" topic.
-
-### Rewards Manager
-
-The Rewards manager is responsible handling point redemptions and donations by Citizens and Officers respectively.
-The service intially serves the data for the views where the users can make these transactions. The Storefront offers, municipal schemes and Charity views are made available to users on the app, the users can then choose how they may use the points they have accrued by making connections.
-Whenever a points transaction is recorded, a representation of the event is put into the outbound channel to be consumed by the profile manager to update the relevant user profiles. The event itself may include data about the nature of the transaction along with discounts or schemes that were availed, coupons or vouchers generated as part of the transaction.
 ![Rewards Manager](/Diagrams/rewards.png)
 *Figure 15 Rewards Manager*
 
-### ETL Manager
+### Support Manager
 
-The ETL manager is a relatively straightforward part of the system, it is only meant to be used by administrative users to upload the organizational data related to Retailers (storefronts,discounts), Municipalites (municipal points related schemes) and Charities. Another possible use case for ETL could be bulk loading Officer accounts and profile data from precinct IT departments, so individual officers don't need to do it themselves.
-As such the ETL manager encapsulates connectors for incoming data sources, and rules for data sanitization and validation
+The Support Manager acts as the main interface between users facing issues or seeking assistance with their travel plans and the preferred travel agency. The component ensures swift problem resolution, providing users with a seamless travel experience.
+
+#### Support Manager Sub-Components and Functionalities
+
+1. **User Request Interface**
+   - Ticket Creation: Allows users to raise specific issues or support requests, specifying details of their problem.
+   - Ticket Tracker: Provides users with real-time status updates on their raised tickets or support requests.
+   - Support Chat: Facilitates direct interaction with support representatives through a chat interface.
+
+2. **Support Agent Dashboard**
+   - Ticket Queue: Displays all the incoming support requests, prioritized based on urgency or user preferences.
+   - User History Viewer: Allows agents to view user profiles and past support interactions for context.
+   - Resolution Assistant: Suggests potential solutions to agents based on common or previously resolved issues.
+
+3. **Integration with Travel Agency Systems**
+   - Agency Connector: Interfaces with systems of the preferred travel agency for support delegation and updates.
+   - Issue Forwarder: Directly forwards complex issues to the travel agency when required.
+   - Feedback Loop: Collects resolution details and feedback from the travel agency to inform the user.
+
+4. **Automated Issue Resolver**
+   - Common Issues Database: Stores resolutions to frequently encountered problems for quick solutions.
+   - Problem Matcher: Analyzes the user's issue and matches it with potential resolutions from the database.
+   - Self-help Assistant: Guides users through self-resolution steps for common and non-critical issues.
+
+5. **Escalation Mechanism**
+   - Priority Assessor: Determines the severity of issues based on user input and system data.
+   - Escalation Trigger: Forwards high-priority or unresolved issues to higher support tiers or agency specialists.
+   - Notification Dispatcher: Alerts support team leads or management of escalated cases.
+
+6. **Feedback & Review System**
+   - Resolution Feedback Collector: Gathers user feedback post-resolution to assess satisfaction.
+   - Support Rating Mechanism: Allows users to rate their support experience, helping in continuous improvement.
+
+7. **Reporting & Analytics**
+   - Issue Trend Analyzer: Examines recurring issues to recommend system improvements.
+   - Agent Performance Metrics: Tracks metrics like resolution time and user satisfaction to evaluate support team performance.
+
+The Support Manager ensures that users receive prompt and effective assistance, reinforcing their confidence in the platform's dedication to user satisfaction.
 
 ![ETL Components](/Diagrams/etl.png)
 *Figure 16 ETL Manager*
 
-### Reporting and Analytics Manager
+### Social Sharing Manager
 
-The purpose of reporting and analytics is to maintain a data warehouse on which it may perform dimension based (temporal, geographical) analytics and report generation. It therefore contains OLAP querying components as well as jobs to run aggregation and report generation tasks.
-Our architecture includes an event stream from the profile manager to be consumed be Reporting and Analytics that allows it to have the latest conections and rewards related data, along with profile attributes of related users available for analysis and reporting . See [ADR05-CQRS-EventSourcing](/ADRs/ADR05-CQRS-EventSourcing.md)
+The Social Sharing Manager aims to make the sharing of travel plans and updates a smooth, user-friendly experience. It provides interfaces for sharing travel details through standard social media platforms and allows users to share specific trip information with a select group of people through invitation-based access.
 
-![Reporting and Analytics](/Diagrams/reporting.png)
-*Figure 17 Reporting and Analytics*
+#### Social Sharing Manager Sub-Components and Functionalities
 
-### Social Media API Manager
+1. **Social Media Integration Module:**
+   - Social Media Connector: Allows users to connect their social media accounts (Facebook, Twitter, Instagram, etc.) to the platform.
+   - Social Media Publisher: Facilitates the publishing of trip information to connected social media accounts.
 
-Most social media platforms allow posting data through REST based APIs. The social media API manager encapsulates the client libraries for the APIs of the platforms where Hey Blue! does it promotion. Third party tools such as Zapier provide social media workflow integration out of the box, in which case the service would encapsulate the the relevant third party client libraries instead
+2. **Privacy & Permissions Engine:**
+   - Access Control: Allows users to set privacy settings for shared information.
+   - Invitation Manager: Handles the sending and revoking of sharing invitations to specific contacts via email or a generated link.
+
+3. **Trip Bundler:**
+   - Trip Selector: Allows users to choose which trips or parts of trips they want to share.
+   - Content Formatter: Takes selected trips and formats the information for sharing, such as creating a summary or an itinerary.
+
+4. **In-app Sharing Mechanism:**
+   - Peer Sharing: Enables users to share trip information with other RoadWarrior users directly within the app.
+   - Group Sharing: Allows sharing with multiple people, like family or friends, by creating a shareable group.
+
+5. **Push Notifications & Alerts:**
+   - Event Listener: Listens for updates or changes to the shared trip and triggers notifications.
+   - Notification Dispatcher: Sends out notifications to all the sharing parties when updates occur (e.g., change in flight status, hotel booking, etc.).
+
+6. **Analytics & Monitoring:**
+   - Share Metrics Tracker: Collects data on how often trips are shared, through which platforms, and what elements of the trip are most shared.
+   - Engagement Analyzer: Measures the engagement level of shared content, like the number of views or interactions it receives.
+
+7. **Dynamic Link Generator:**
+   - URL Shortener: Creates short, user-friendly URLs for sharing trip details.
+   - QR Code Generator: Enables users to generate QR codes that link to their shared trips for easy scanning and access.
+
+8. **Customization & Templates:**
+   - Template Builder: Offers a range of customizable templates for how the shared information will appear.
+   - Theme Selector: Allows users to choose themes or designs to apply to the shared content, enhancing visual appeal.
+
+9. **Security Measures:**
+   - Encryption: Ensures that shared data is encrypted during transmission.
+   - Token-based Authentication: Ensures only authorized users can access shared trip information.
+
+10. **Help & Support:**
+    - FAQ & Guidelines: Provides a set of frequently asked questions and guidelines on how to use the sharing features effectively.
+    - Customer Support: Offers in-app support for users facing issues or having questions about the sharing functionality.
+
+The Social Sharing Manager makes sharing travel plans a seamless, user-centric experience while also ensuring that the shared information is secure and respects user privacy.
 
 ![Social Media API](/Diagrams/social.png)
 *Figure 18 Social Media API Manager*
+
+### Reporting and Analytics Manager
+
+The Reporting & Analytics Manager plays an instrumental role in understanding user behavior, travel trends, and platform performance. It furnishes users with end-of-year summary reports and extracts insightful analytics for business strategy and platform enhancements. By capturing, processing, and visualizing vast amounts of data, this manager aids in decision-making and offers a more tailored user experience.
+
+#### Reporting and Analytics Manager Sub-Components and Functionalities
+
+1. **Data Collection Module:**
+   - User Behavior Tracker: Monitors and logs user interactions within the app for analysis.
+   - External Data Collector: Gathers data from Third-Party Travel APIs Manager, Email Polling Manager, and other components.
+
+2. **Data Processing & Transformation Engine:**
+   - Data Cleansing Tool: Removes anomalies, duplicates, or irrelevant data points.
+   - Data Mapper: Transforms raw data into structured formats suitable for analysis.
+
+3. **Analytics Engine:**
+   - Descriptive Analytics: Provides insights on historical data, showing travel patterns, popular destinations, etc.
+   - Predictive Analytics: Uses statistical models to forecast future travel trends and user preferences.
+   - Prescriptive Analytics: Offers recommendations based on historical and forecasted data, such as suggesting promotional strategies.
+
+4. **Reporting Module:**
+   - Dynamic Report Generator: Creates customizable reports based on user-defined parameters.
+   - End-of-Year Summary Builder: Compiles yearly travel summaries for individual users, highlighting key metrics.
+
+5. **Visual Data Representation Tools:**
+   - Dashboard Builder: Allows admins or business analysts to build dynamic visual dashboards.
+   - Data Visualization Library: Offers various visualization tools like bar charts, heat maps, and geographical plotting.
+
+6. **Trend Analysis & Detection:**
+   - Anomaly Detector: Spots and notifies of any unusual patterns, which could indicate issues or emerging trends.
+   - Seasonality Tracker: Identifies recurring seasonal patterns in travel behaviors.
+
+7. **Feedback Analysis System:**
+   - Sentiment Analyzer: Processes user feedback to gauge sentiment and satisfaction levels.
+   - Feedback Categorizer: Segregates feedback into predefined categories for structured analysis.
+
+8. **Integration & Interoperability Layer:**
+   - Data Sync Tool: Ensures the latest data is available from other components of the platform.
+   - API Communicator: Retrieves and sends data to other components when needed.
+
+9. **Security & Compliance Mechanism:**
+   - Data Encryption: Encrypts sensitive analytics data, ensuring it's secure at rest and in transit.
+   - Privacy Guard: Ensures that user data used for analytics is anonymized or pseudonymized, adhering to privacy regulations.
+
+10. **Storage & Database Management:**
+    - Data Warehouse: Stores large volumes of historical data in an optimized manner for analysis.
+    - Database Optimizer: Enhances retrieval times for commonly accessed datasets or queries.
+
+The Reporting & Analytics Manager not only enriches the RoadWarrior platform's business insights but also amplifies user engagement by providing them with valuable summaries and potentially offering tailored travel suggestions in the future.
+
+![Reporting and Analytics](/Diagrams/reporting.png)
+*Figure 17 Reporting and Analytics*
 
 ## Deployment
 
