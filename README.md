@@ -212,15 +212,42 @@ Given the shared database between the ETL and Rewards service, the system archit
 ## Components
 The following section describes the internal components of each microservice identified the previous section 
 ### Identity and Access Manager
-The IAM service encapsulates the components that handle identity provisioning, account creation and session management. The implementation of a custom ad-hoc password based registration and authentication component is optional and not recommended.  
-The recommended approach is to register the service with a cloud based OpenID Connect provider and adapt an OIDC client library to provision an identity and then request it once the user authenticates. 
-Hey Blue! may later [implement it's own OpenID Connect](https://openid.net/developers/certified/) system to replace the cloud based provider if it becomes cost prohibitive  
-The user will also be allowed to sign in using their social media accounts, in which case the service will request identity attributes from the social media identity provider.  
-All federated identity providers must be able to provide a common set of identity attributes (minimally name and email id) for the user.  
-An additional factor may be added to verify the user's phone number with a one time password to complete user self registration.  
-The final step in account creation is registering the user's phone number with a one time password verification. Use of an external SMS provider is recommended. The phone number will be use to map the user's account to a single mobile device.  
-Once all of the above steps an account will be created and the user will be asked to authenticate. Post authentication, the account provisioning component will create a session and issue a session token to the user which will only expire if the user explicitly logs out. Session storage will also store a refresh token  
-A valid session token gives the user access to all interfaces exposed by the API layer and should be part of the URI for all post authentication requests. 
+
+The **Identity and Access Manager (IAM)** plays a critical role in managing and securing access to resources within a system architecture. IAM is a crucial component of cybersecurity and ensures that only authorized users and entities can access the system's resources while maintaining the principle of least privilege. Here are the key responsibilities and functions of an Identity and Access Manager within a system architecture:
+
+**User Identity Management:**
+   - Create and manage user accounts: IAM administrators create, update, and deactivate user accounts as needed.
+   - Maintain user profiles: IAM ensures that user profiles are accurate and up-to-date, reflecting each user's role and permissions.
+
+**Authentication:**
+   - Implement authentication mechanisms: IAM manages the authentication process, which verifies the identity of users and entities trying to access the system. Common methods include passwords, multi-factor authentication (MFA), and biometrics.
+   - Secure authentication tokens: IAM ensures that authentication tokens (e.g., session cookies) are secure to prevent unauthorized access.
+
+**Authorization:**
+   - Define access control policies: IAM administrators create and enforce access control policies that determine who can access what resources and under what conditions.
+   - Role-based access control (RBAC): IAM often implements RBAC, where users are assigned roles with specific permissions based on their job functions.
+   - Fine-grained access control: IAM may also support more granular access control policies, allowing for precise control over resource access.
+
+**Access Provisioning and Deprovisioning:**
+   - Automate user provisioning: IAM can automate the process of granting access to new users, ensuring they have the necessary permissions from the start.
+   - Deactivation and deprovisioning: When users leave the organization or no longer require access, IAM ensures that their accounts and permissions are promptly revoked.
+
+**Audit and Compliance:**
+   - Logging and monitoring: IAM logs user activities and access attempts for auditing purposes, helping organizations maintain compliance with security regulations.
+   - Compliance enforcement: IAM can enforce compliance policies and ensure that access control measures align with regulatory requirements.
+
+**Single Sign-On (SSO):**
+   - Provide SSO capabilities: IAM can enable SSO solutions, allowing users to access multiple applications with a single set of credentials, enhancing user convenience and security.
+
+**Password Management:**
+   - Password policies: IAM enforces password policies, such as complexity requirements and password rotation, to enhance security.
+   - Password reset and recovery: IAM often provides self-service mechanisms for users to reset or recover their passwords securely.
+
+**Access Reviews:**
+   - Periodic access reviews: IAM may facilitate periodic reviews of user access rights to identify and address any unauthorized or unnecessary permissions.
+
+**Security Integration:**
+   - Integration with security tools: IAM systems often integrate with other security solutions, such as intrusion detection systems and SIEM (Security Information and Event Management) platforms, to enhance overall security posture.
 
 ![IAM](/Diagrams/IAM.png)
 *Figure 10 Identity & Access Manager*
