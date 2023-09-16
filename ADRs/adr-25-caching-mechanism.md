@@ -1,9 +1,11 @@
-## ADR-25: Caching Mechanism Strategy
+# ADR-25: Caching Mechanism Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 To ensure high performance and reduced latency, it's imperative to adopt a caching mechanism. Caching strategies play a pivotal role in the user experience, especially for a travel platform where timely information retrieval can make or break user decisions. The main contenders in the discussion are:
 
 1. **In-memory Caching (Redis)**:
@@ -29,7 +31,8 @@ To ensure high performance and reduced latency, it's imperative to adopt a cachi
 
 For our travel platform, while web page caching is important, caching dynamic data, user sessions, and other elements is equally critical. Moreover, the flexibility to use cache for multiple purposes and patterns holds value.
 
-### Decision
+## Decision
+
 Opt for **Redis** for the following reasons:
 
 - **Flexibility**: Redis's versatile nature allows it to handle diverse caching needs, from session storage to frequently accessed data.
@@ -37,13 +40,15 @@ Opt for **Redis** for the following reasons:
 - **Scalability**: Redis can be easily scaled out with partitioning.
 - **Mature Ecosystem**: Availability of client libraries for various programming languages and robust community support.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Improved Latency**: Faster data retrieval for a better user experience.
 - **Versatility**: Ability to use Redis for multiple caching patterns and even as a message broker or session store.
 - **Scalability**: Can handle large volumes of data and traffic by scaling out.
 
 **Cons**:
+
 - **Cost Consideration**: Being in-memory, Redis can become expensive as the dataset grows. It's essential to monitor usage and costs.
 - **Persistence Management**: Depending on configuration, there's potential data loss in crashes. Regular backups and choosing appropriate persistence options become crucial.
-

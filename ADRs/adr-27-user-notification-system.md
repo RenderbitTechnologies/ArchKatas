@@ -1,9 +1,11 @@
-## ADR-27: User Notification System Strategy
+# ADR-27: User Notification System Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 A robust user notification system is vital for a travel platform like ours, ensuring timely updates on booking statuses, promotions, and other relevant information. To deliver a seamless user experience, the choice of notification delivery methods must cater to the diverse preferences of users, providing them with relevant, timely, and actionable information without being obtrusive.
 
 We weighed the following primary channels for user notifications:
@@ -39,7 +41,8 @@ We weighed the following primary channels for user notifications:
 
 The ideal solution should leverage the strengths of each channel, using them complementarily, based on the content's nature, urgency, and user preferences.
 
-### Decision
+## Decision
+
 Adopt a **hybrid approach** that integrates all three channels:
 
 - Use **SMS** via providers like [Twilio](https://www.twilio.com/) for critical alerts, such as booking confirmations and urgent travel updates, where immediate attention is required.
@@ -48,14 +51,16 @@ Adopt a **hybrid approach** that integrates all three channels:
 
 Third-party hosted service providers will be employed to ensure scalability, reliability, and feature-rich capabilities without overburdening our development and operational teams.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Diverse Channels**: Cater to various user preferences and notification content types.
 - **Scalability**: Using third-party services ensures we can handle volume spikes.
 - **Engagement**: Effective use of notifications can lead to increased user engagement and retention.
 
 **Cons**:
+
 - **Management Complexity**: Multiple channels require more intricate management and segmentation strategies.
 - **Cost**: Utilizing multiple channels, especially SMS, may have associated costs.
 - **User Experience Balance**: Care must be taken not to overwhelm users with notifications, potentially leading to app uninstalls or opt-outs.
-

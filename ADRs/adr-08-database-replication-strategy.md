@@ -1,9 +1,11 @@
-## ADR-08: Database Replication Strategy
+# ADR-08: Database Replication Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Given the nature of our platform, which is expected to scale to handle millions of users worldwide, data integrity, high availability, and read-write operations efficiency are paramount. Replicating our database is a strategy that ensures data availability and load distribution. There are various replication strategies, including:
 
 1. **Primary-Read Replica Replication**:
@@ -22,7 +24,8 @@ Given the nature of our platform, which is expected to scale to handle millions 
 
 Given our application's requirements and growth trajectory, and balancing complexity, we had to decide on an optimal strategy.
 
-### Decision
+## Decision
+
 We have decided to go with **Primary-Read Replica Replication** for the following reasons:
 
 1. **Simplicity**: Primary-Read Replica is relatively simple to set up compared to multi-primary and sharding.
@@ -30,13 +33,16 @@ We have decided to go with **Primary-Read Replica Replication** for the followin
 3. **Backup**: Read replicas can serve as an automatic backup mechanism. If the primary goes down, one of the read replicas can be promoted to primary, ensuring data integrity.
 4. **Cost**: It offers a balanced cost for setup, maintenance, and scalability.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Efficient Read Operations**: With multiple read replicas, read operations can be distributed, allowing for faster data access.
 - **Data Redundancy**: Data is stored in multiple locations, reducing chances of total data loss.
 - **Failover Mechanism**: In case the primary fails, a read replica can take over, minimizing downtime.
 
 **Cons**:
+
 - **Write Bottleneck**: All write operations are directed to the primary, which could be a bottleneck when there are many concurrent write operations.
 - **Latency in Data Propagation**: There can be a slight delay in data propagation from the primary to the read replicas.
 - **Manual Intervention**: If the primary fails, promoting a read replica might require manual intervention or a well-configured automated system.

@@ -1,9 +1,11 @@
-## ADR-13: Content Delivery Network (CDN)
+# ADR-13: Content Delivery Network (CDN)
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 In our globally dispersed user base, it's imperative to ensure that content is delivered with minimal latency and high reliability. A Content Delivery Network (CDN) assists in achieving this by serving content from the closest edge location to the user. Three of the top contenders in the CDN space are:
 
 1. **[Amazon CloudFront](https://aws.amazon.com/cloudfront/)**:
@@ -23,7 +25,8 @@ In our globally dispersed user base, it's imperative to ensure that content is d
 
 Our priorities involve smooth integration, cost efficiency, performance, and reliability.
 
-### Decision
+## Decision
+
 We have chosen **Amazon CloudFront** for the following reasons:
 
 1. **AWS Integration**: Since we've decided on AWS as our primary cloud provider, CloudFront integrates seamlessly with our other AWS resources. This provides operational simplicity and consolidated billing.
@@ -31,12 +34,15 @@ We have chosen **Amazon CloudFront** for the following reasons:
 3. **Cost Efficiency**: The pay-as-you-go model avoids upfront commitments and allows us to pay only for the content delivered.
 4. **Security & DDoS Protection**: CloudFront, in conjunction with AWS Shield and WAF, provides robust security layers.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Seamless AWS Integration**: Simplifies operations and management.
 - **Scalability**: Can handle spikes in traffic without manual intervention.
 - **Enhanced Performance**: Improves site loading times, offering a better user experience.
 
 **Cons**:
+
 - **Vendor Lock-in**: Further deepens our dependency on the AWS ecosystem.
 - **Complex Pricing**: CloudFront's pricing can be intricate, especially when considering data out costs and regional variations.

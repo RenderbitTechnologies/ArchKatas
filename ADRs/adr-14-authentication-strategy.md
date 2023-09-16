@@ -1,9 +1,11 @@
-## ADR-14: Authentication Strategy
+# ADR-14: Authentication Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Providing a secure and user-friendly authentication system is of utmost importance for our platform. Users should have a seamless experience whether they're accessing our platform for the first time or returning. We considered the following primary authentication mechanisms:
 
 1. **[OAuth2.0/OpenID](https://openid.net/connect/)**:
@@ -20,7 +22,8 @@ Providing a secure and user-friendly authentication system is of utmost importan
 
 For our application, balancing security, user experience, and integration capabilities is essential.
 
-### Decision
+## Decision
+
 We have opted for a combination of **OAuth2.0/OpenID** and **SSO** for the following reasons:
 
 1. **Broad Acceptance & Flexibility**: OAuth2.0/OpenID is widely adopted and provides flexibility in terms of user authentication. It's not only secure but also provides a familiar login experience for users, as they might already be using OAuth2.0/OpenID in other platforms.
@@ -29,12 +32,15 @@ We have opted for a combination of **OAuth2.0/OpenID** and **SSO** for the follo
 
 3. **Corporate Integration with SSO**: As we expand and integrate with corporations or other large entities, providing SSO capabilities ensures employees or members of these entities can access our platform without going through repeated authentication processes. It's not just about convenience; it's about enhancing user experience and speeding up the onboarding process.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Seamless User Experience**: With SSO, users experience fewer disruptions.
 - **Flexible Integrations**: OAuth2.0/OpenID allows for easy integration with third-party platforms and services.
 - **Enhanced Security**: Leveraging the combination ensures both secure authentication (via OAuth2.0/OpenID) and secure session management (via JWT).
 
 **Cons**:
+
 - **Complex Implementation**: Combining multiple strategies requires careful implementation to avoid vulnerabilities.
 - **Dependency**: Relying on external identity providers (in case of some OAuth2.0/OpenID scenarios) can sometimes result in outages or issues if the external service faces downtime.

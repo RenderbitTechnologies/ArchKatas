@@ -1,9 +1,11 @@
-## ADR-24: Load Balancing Strategy
+# ADR-24: Load Balancing Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Load balancing is an essential component of any large-scale web application. It is responsible for distributing incoming application traffic across multiple targets, ensuring both availability and fault tolerance. The primary choices to consider in our scenario include:
 
 1. **AWS Elastic Load Balancer (ELB)**:
@@ -36,7 +38,8 @@ Load balancing is an essential component of any large-scale web application. It 
 
 Considering the international launch of our travel platform and the requirement to prioritize North America and Western Europe for latency considerations, a solution that can easily handle varying traffic loads and ensure low latency is essential.
 
-### Decision
+## Decision
+
 Opt for **AWS Elastic Load Balancer (ELB)** for the following reasons:
 
 - **Ease of Management**: ELB provides a fully managed service, reducing operational overhead.
@@ -44,12 +47,15 @@ Opt for **AWS Elastic Load Balancer (ELB)** for the following reasons:
 - **Global Reach**: AWS ELB integrates with the Amazon Route 53 service, ensuring efficient routing of users from different regions to the nearest data centers.
 - **Built-in Security**: ELB offers built-in integrations for AWS security features such as AWS Shield, AWS WAF, and SSL/TLS termination.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Automatic Scaling**: ELB handles traffic spikes smoothly without manual intervention.
 - **High Availability**: ELB automatically distributes traffic across multiple targets, ensuring that if one fails, traffic is rerouted to healthy ones.
 - **Enhanced Monitoring**: Native integration with AWS CloudWatch for monitoring and alerts.
 
 **Cons**:
+
 - **Cost Implications**: ELB might come with a higher cost than self-managed solutions.
 - **Less Granular Control**: Some advanced configurations possible in Nginx or HAProxy might be harder or not possible to implement with ELB.

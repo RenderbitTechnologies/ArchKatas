@@ -1,9 +1,11 @@
-## ADR-11: Data Analytics Strategy
+# ADR-11: Data Analytics Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Given the nature of our platform, analyzing user travel trends, preferences, cancellations, updates, and more, is essential. This data can drive decisions and enhance user experiences. The challenge lies in managing and analyzing vast amounts of data efficiently. Our contenders are:
 
 1. **[Apache Spark](https://spark.apache.org/)**:
@@ -29,7 +31,8 @@ Given the nature of our platform, analyzing user travel trends, preferences, can
 
 Given our focus on ensuring high flexibility, scalability, and avoiding vendor lock-in, we evaluated the technologies based on these critical aspects.
 
-### Decision
+## Decision
+
 We've chosen to go with **Apache Spark** for these reasons:
 
 1. **Flexibility and Scalability**: Spark's distributed nature allows it to process large datasets efficiently, scaling horizontally as needed.
@@ -38,12 +41,15 @@ We've chosen to go with **Apache Spark** for these reasons:
 4. **Language Support**: Being able to use Java, Scala, Python, and R provides flexibility in analytics tasks and potential integrations.
 5. **Cost Efficiency**: Being open-source, we're only limited by the infrastructure costs, avoiding per-query costs that solutions like BigQuery impose.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Versatility**: Spark is versatile and can handle batch processing, real-time data processing, machine learning, and more.
 - **Community Support**: With a strong open-source community, getting support and updates is more assured.
 - **Integration**: Easy to integrate with our chosen data storage and other systems.
 
 **Cons**:
+
 - **Operational Complexity**: Managing a Spark cluster may introduce operational overhead and complexity.
 - **Resource Intensive**: Spark is resource-hungry, especially memory, which can affect costs if not managed well.

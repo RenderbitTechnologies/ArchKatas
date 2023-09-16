@@ -1,9 +1,11 @@
-## ADR-10: Message Broker & Event System Strategy
+# ADR-10: Message Broker & Event System Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Our application needs a robust system to handle a vast number of messages, events, and updates that originate from different parts of the system, particularly with travel-related updates. The choices under consideration are:
 
 1. **[Apache Kafka](https://kafka.apache.org/)**:
@@ -29,7 +31,8 @@ Our application needs a robust system to handle a vast number of messages, event
 
 Given the scale of our platform, the anticipated volume of messages, and the need for real-time analytics and processing, we required a solution that is both performant and scalable.
 
-### Decision
+## Decision
+
 We have chosen to employ **Apache Kafka** for the following reasons:
 
 1. **High Throughput**: Kafka can handle millions of messages per second, fitting our platform's scale.
@@ -38,13 +41,16 @@ We have chosen to employ **Apache Kafka** for the following reasons:
 4. **Real-time Stream Processing**: Using Kafka Streams, we can process our data in real-time, which is crucial for timely updates.
 5. **Avoid Vendor Lock-in**: Kafka being an open-source project ensures we aren't tied to a specific cloud provider's ecosystem.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Performance and Scale**: Kafka's architecture allows for handling very high volumes of data efficiently.
 - **Flexibility**: Ability to leverage Kafka's ecosystem for stream processing, connectors, and more.
 - **Reliability**: With data replication and durability guarantees, data loss risks are minimized.
 
 **Cons**:
+
 - **Complexity**: Kafka's setup, tuning, and maintenance might require more specialized knowledge.
 - **Operational Overhead**: While highly performant, Kafka might introduce more operational overhead than a simpler queuing system.
 - **Resource Intensive**: Kafka is designed for high performance, which can also mean it's resource-hungry.

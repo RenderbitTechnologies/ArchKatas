@@ -1,9 +1,11 @@
-## ADR-09: Email Polling Strategy
+# ADR-09: Email Polling Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Our platform requires real-time data about users’ travel-related emails to help them manage reservations and updates efficiently. This necessitates an effective email polling strategy. There are various approaches, including:
 
 1. **IMAP (Internet Message Access Protocol)**:
@@ -25,7 +27,8 @@ Our platform requires real-time data about users’ travel-related emails to hel
 
 Given our platform's requirements, which include real-time notifications, scalability, and the complexity of managing email connections and configurations, we had to decide on the most effective and efficient approach.
 
-### Decision
+## Decision
+
 We have chosen to employ **Third-party Services (specifically, Context.IO)** for the following reasons:
 
 1. **Simplicity & Rapid Development**: Using services like Context.IO abstracts away the complexities of dealing with different email servers and configurations.
@@ -34,13 +37,16 @@ We have chosen to employ **Third-party Services (specifically, Context.IO)** for
 4. **Security**: Trusted third-party services often have robust security measures in place, reducing our platform's exposure to vulnerabilities.
 5. **Cost-Efficiency**: The reduced development effort and infrastructural requirements can lead to cost savings in the long run.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Rapid Integration**: Allows for quicker time-to-market.
 - **Efficient Real-time Processing**: Immediate notification of relevant emails.
 - **Reduced Maintenance**: Offloads the need to manage and maintain email servers.
 
 **Cons**:
+
 - **Vendor Dependency**: Reliance on a third-party service introduces the risk of service discontinuations or changes in terms and pricing.
 - **Data Privacy Concerns**: Using an external service requires trust that the vendor maintains high data privacy standards, especially when handling sensitive information.
 - **Costs**: Though there can be cost savings in terms of development and maintenance, there will be recurring costs associated with using a third-party service.

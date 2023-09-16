@@ -1,9 +1,11 @@
-## ADR-15: Monitoring & Logging Strategy
+# ADR-15: Monitoring & Logging Strategy
 
-### Status
+## Status
+
 Adopted
 
-### Context
+## Context
+
 Monitoring and logging are pivotal to ensure smooth operation of our system, quick debugging, and resolution of issues. An effective strategy here not only aids developers but also instills confidence in stakeholders about the system's robustness. The primary options we evaluated were:
 
 1. **[ELK Stack (Elasticsearch, Logstash, and Kibana)](https://www.elastic.co/elk-stack)**:
@@ -20,7 +22,8 @@ Monitoring and logging are pivotal to ensure smooth operation of our system, qui
 
 For our application, a combination of comprehensiveness, scalability, and cost-effectiveness was sought.
 
-### Decision
+## Decision
+
 We have chosen the **ELK Stack** for the following reasons:
 
 1. **Comprehensive Solution**: ELK provides a full-stack solution from ingesting logs (Logstash) to storing (Elasticsearch) and visualizing them (Kibana). This integrated solution ensures there are fewer integration points and potential points of failure.
@@ -31,12 +34,15 @@ We have chosen the **ELK Stack** for the following reasons:
 
 4. **Rich Ecosystem & Community**: Being one of the most popular logging solutions, the community and ecosystem around ELK are robust, ensuring updates, plugins, and solutions to common issues.
 
-### Consequences
+## Consequences
+
 **Pros**:
+
 - **Unified Interface**: Kibana provides a singular interface for monitoring, visualizations, and alerting.
 - **Cost-effective**: Given that the core features are open source, initial costs are lower.
 - **Customizable**: Being open-source, it can be tailored to our specific needs.
 
 **Cons**:
+
 - **Maintenance Overhead**: Compared to fully managed solutions like Datadog, ELK might need more hands-on maintenance.
 - **Complexity**: As with any powerful tool, ELK comes with a learning curve and initial setup complexity.
