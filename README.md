@@ -26,6 +26,8 @@ This is a team submission for [O'Reilly Architecture Katas September 2023](https
   - [Others Considered](#others-considered)
 - [Architecture Approach](#architecture-approach)
   - [Architecture Goals](#architecture-goals)
+  - [Architecture Characteristics Evaluation](#architecture-characteristics-evaluation)
+  - [Choice of Architecture](#choice-of-architecture)
 - [Context](#context)
   - [Actors](#actors)
   - [Use Cases](#use-cases)
@@ -35,13 +37,13 @@ This is a team submission for [O'Reilly Architecture Katas September 2023](https
   - [Service Containers](#service-containers)
   - [API Layer](#api-layer)
 - [Components](#components)
-  - [Identity and Access Manager](#identity-and-access-manager)
+  - [Identity and Access Manager](#identity-and-access-manager-iam)
   - [Profile Manager](#profile-manager)
-  - [Connections Manager](#connections-manager)
-  - [Rewards Manager](#rewards-manager)
-  - [ETL Manager](#etl-manager)
+  - [Reservation Manager](#reservation-manager)
+  - [Travel Manager](#travel-manager)
+  - [Support Manager](#support-manager)
+  - [Social Sharing Manager](#social-sharing-manager)
   - [Reporting and Analytics Manager](#reporting-and-analytics-manager)
-  - [Social Media API Manager](#social-media-api-manager)
 - [Deployment](#deployment)
 - [Cost Analysis](#cost-analysis)
   - [Service-wise Cost Breakdown](#service-wise-cost-breakdown)
@@ -213,19 +215,67 @@ In case of service downtime, the system needs to be able to recover in a consist
 
 7. **User Experience Focus**: With a requirement for a rich user interface across all platforms, the architecture should support seamless user experiences, fast load times, and intuitive interactions.
 
-### A discussion regarding architecture characteristics and microservices
+### Architecture Characteristics Evaluation
 
 Figure 1 shows how our top 3 architecture characteristics score against formal system architecture styles.
 
-![characteristics](/Diagrams/characteristics.png)
-_Figure 1 Architecture Characteristics_
+![characteristics](./diagrams/architecture-styles.png)
+_Figure 1: Architecture Styles_
 
-- It is incidental that the architectural styles we have chosen have scored the highest number of stars against the top 3 chosen characteristics.
-- Even though Microservices score low on performance, which is one of our top 3 characteristics, we still primarily use Microservices as part of our proposed system architecture. The reason for that is, this performance penalty is applicable to the entire system comprising of independent Microservices, because of the inherent latency introduced by network IO and transaction management in a distributed system. The performance penalty however does not apply to individual microservices, in cases where one service has much higher performance requirements than others. In such cases it makes sense to isolate the performance critical functionality into a micro service that might serve a much higher number of requests compared to the rest of the system. This is the approach we take to mitigate this overall performance penalty.
-- Microservices are inclusive of the other event driven and serverless architecture styles for the following reasons
+### Choice of Architecture
 
-1. Event driven architecture is really about message based asynchronous communication between components of the system. Nothing about Microservices prohibits us from using both synchronous and asynchronous components and communication mechanisms for the same service.
-2. Serverless architectures are really about stateless microservices. Microservices can be deployed on a serverless platform with the caveat that the services themselves be containerised & stateless applications.
+A combination of microservices and event-driven architecture is ideal for the RoadWarrior platform, given its requirements for real-time responsiveness, scalability, and adaptability. Our system must quickly adapt to various real-time travel updates while ensuring seamless scalability for a rapidly growing user base. Microservices enable focused, independent scalability and evolution of distinct platform features, from email polling to travel updates. Coupled with an event-driven approach, this architecture ensures real-time, asynchronous communication across services, vital for timely user notifications and updates. In contrast, while patterns like modular monolith or service-based architectures offer modularity and clear boundaries, they may not provide the agility, scalability, or real-time responsiveness our platform demands. Service-oriented and space-based architectures, though efficient in their contexts, might introduce complexities not essential for our use-case. The fusion of microservices with event-driven principles, therefore, stands out as the most fitting choice for the dynamic, user-centric, and real-time nature of the RoadWarrior platform.
+
+#### Impact for Top 3 Architectural Characteristics
+
+1. **Scalability**
+    - **Microservices**:
+        - Pros: Microservices inherently support horizontal scalability. Each service can be scaled independently based on its individual load.
+        - Cons: Requires proper service orchestration and might introduce complexities in inter-service communication.
+    - **Event-driven**:
+        - Pros: This style can handle a high volume of real-time data and scale out as needed, leveraging asynchronous communication and ensuring smooth system operations.
+        - Cons: Requires robust event-handling mechanisms and a reliable messaging platform.
+
+2. **Extensibility**
+    - **Microservices**:
+        - Pros: New functionalities can be added as new services without disrupting existing ones. This ensures the system remains adaptable and can grow with changing business requirements.
+        - Cons: Service dependencies need careful management to avoid tight coupling.
+    - **Event-driven**:
+        - Pros: New events or event listeners can be added without altering existing flow. This provides a dynamic way to extend system behaviors.
+        - Cons: Event schema evolution needs to be managed to avoid breaking changes.
+
+3. **Performance**
+    - **Microservices**:
+        - Pros: Each service can be optimized for its specific task, and performance bottlenecks can be addressed at the individual service level.
+        - Cons: Network latency might become a concern with excessive inter-service calls.
+    - **Event-driven**:
+        - Pros: Asynchronous nature ensures system responsiveness. Decoupled services ensure one component's failure doesn't slow down others.
+        - Cons: Event processing time can be a factor, especially if event queues become overloaded.
+
+#### Other Architectural Characteristics' Impact
+
+- **Elasticity**:
+  - Supported well by both architectures. Microservices can grow/shrink based on demand, and event-driven systems can handle fluctuating loads.
+
+- **Fault Tolerance**:
+  - Microservices ensure that a failure in one service doesn't bring down the entire system. Event-driven systems, with their decoupled nature, can handle failures gracefully by reprocessing events.
+
+- **Interoperability**:
+  - With clearly defined APIs and event schemas, both architectures support seamless integration with external systems.
+
+- **Simplicity**:
+  - While microservices introduce complexities in orchestration, they simplify system maintenance and evolution. Event-driven architectures simplify flow but require a robust event-handling mechanism.
+
+- **Cost**:
+  - Initial setup and orchestration might be costlier. However, in the long run, both architectures can lead to cost savings due to scalability and maintainability benefits.
+
+- **Testability**:
+  - Microservices can be tested in isolation. Event-driven systems require testing the event flow and ensuring events are processed correctly.
+
+- **Deployability**:
+  - Microservices allow for independent deployment and continuous delivery. Event-driven systems require coordination in event schema changes.
+
+In conclusion, the combination of microservices and event-driven architecture provides a robust, scalable, and extensible solution, aligning well with the architectural goals of the RoadWarrior platform. While there are challenges, they are outweighed by the benefits, especially when considering the platform's long-term evolution and growth.
 
 ## Context
 
@@ -426,7 +476,7 @@ _Figure 11 Profile Manager_
 
 ### Reservation Manager
 
-The Reservation Manager is central to the Road Warrior platform as it manages all reservations for the user, whether manually entered or sourced from email polling.
+The Reservation Manager is central to the RoadWarrior platform as it manages all reservations for the user, whether manually entered or sourced from email polling.
 
 #### Reservation Manager Sub-Components and Functionalities
 
