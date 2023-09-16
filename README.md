@@ -45,6 +45,9 @@ This is a team submission for [O'Reilly Architecture Katas September 2023](https
   - [Social Sharing Manager](#social-sharing-manager)
   - [Reporting and Analytics Manager](#reporting-and-analytics-manager)
 - [Deployment](#deployment)
+  - [Deployment Architecture Walkthrough](#deployment-architecture-walkthrough)
+  - [AWS Services Used](#aws-services-used)
+  - [Alternative Cloud Deployments](#alternative-cloud-deployments)
 - [Cost Analysis](#cost-analysis)
   - [Service-wise Cost Breakdown](#service-wise-cost-breakdown)
   - [Total Estimated Monthly Cost](#total-estimated-monthly-cost)
@@ -56,6 +59,8 @@ This is a team submission for [O'Reilly Architecture Katas September 2023](https
   - [Conclusion](#conclusion)
 - [References](#references)
   - [Architectural Decision Records](#architectural-decision-records)
+
+@TODO: Reorder all diagrams
 
 ## Introduction
 
@@ -128,6 +133,10 @@ The provided requirements document is available [here](./requirements-specificat
 - **Social Media Integrator:** For sharing trip details on social media platforms.
 - **Data Analytics Service:** For processing, analyzing, and reporting user trip data.
 
+A high-level component diagram of the system can be visualized below.
+![High-Level Component Diagram](./diagrams/component-diagram.png)
+_Figure 1: High-Level Component Diagram_
+
 ### Architectural Considerations
 
 - **Scalability and Cloud Platform:** Given the projected growth rate, we'll require a cloud platform that offers the ability to scale resources up and down with ease. AWS, Google Cloud, and Azure are all great options. Given the international nature of the app, we might choose AWS due to its more extensive global data center presence.
@@ -145,9 +154,9 @@ The following section highlights the salient architecure characteristics we cons
 | **Scalability**   | With 15 million user accounts and 2 million active users/week, the system needs to handle high traffic and user data. | Yes            |
 | Portability       | As an international system, it must operate across different regions and networks.                                    | No             |
 | Upgradeability    | To remain competitive and relevant, the system should be able to incorporate new features or updates easily.          | No             |
-| **Extensibility** | Given integrations with various travel systems and potential future platforms, the architecture must be extensible.   | Yes            |
+| Extensibility     | Given integrations with various travel systems and potential future platforms, the architecture must be extensible.   | No            |
 | **Performance**   | Fast response times are needed for both web and mobile, ensuring user satisfaction.                                   | Yes            |
-| Availability      | With a max of 5 minutes of unplanned downtime per month, the system requires high availability.                       | No             |
+| **Availability**  | With a max of 5 minutes of unplanned downtime per month, the system requires high availability.                       | Yes            |
 
 ### Implicit Characteristics
 
@@ -172,6 +181,10 @@ As the system is mission critical, and cost of downtime is high, it needs to be 
 #### Recoverability
 
 In case of service downtime, the system needs to be able to recover in a consistent state.
+
+The key architectural characteristics for the proposed system can be visualized below:
+![Key Architectural Characteristics](./diagrams/architecture-characteristics-diagram.png)
+_Figure 2: Key Architectural Characteristics_
 
 ## Architecture Approach
 
@@ -217,10 +230,10 @@ In case of service downtime, the system needs to be able to recover in a consist
 
 ### Architecture Characteristics Evaluation
 
-Figure 1 shows how our top 3 architecture characteristics score against formal system architecture styles.
+Figure 2 shows how our top 3 architecture characteristics score against formal system architecture styles.
 
-![characteristics](./diagrams/architecture-styles.png)
-_Figure 1: Architecture Styles_
+![Architecture Styles](./diagrams/architecture-styles-diagram.png)
+_Figure 2: Architecture Styles_
 
 ### Choice of Architecture
 
@@ -306,6 +319,10 @@ _Figure 5 Automation Policies and Bounded Contexts_
 
 The above diagram gives us the boundaries of our bounded contexts and the event driven connections between them
 
+## User Journeys
+
+1.
+
 ## Containers
 
 ### Modular Monolith
@@ -346,11 +363,11 @@ The following diagram illustrates how the remaining services are coupled, that d
 ![quanta](/Diagrams/quanta.png)
 _Figure 9 Coupling and Quanta_
 
-**Static Coupling**
+#### Static Coupling
 
 - The ETL service and the Rewards Manager microservice are statically coupled through a shared database. We could make a case for separating transactions from master data into two separate databases, where ETL only writes to the master database and Rewards manager only reads from it as shown in the diagram. This however does not do much to reduce the contract coupling introduced by shared data they have to work with. The diagram shows to separate databases for clarity and semantic reasons
 
-**Dynamic Coupling**
+#### Dynamic Coupling
 
 - The Profile service synchronously requests data from IAM service
 - The Rewards and Connections services synchronously requests data from the Profile service
@@ -372,6 +389,16 @@ The following section describes the internal components of each microservice ide
 5. **Support Manager:** Facilitating user requests for support from the travel agency.
 6. **Social Sharing Manager:** Handling sharing of trip details to social media.
 7. **Reporting and Analytics Manager:** Generating end-of-year reports and analytical data.
+
+The components can be visualized in a hexagonal microservices-oriented architecture pattern in the diagram below:
+![Component Diagram](./diagrams/hexagonal-component-diagram.png)
+_Figure 5: Component Diagram_
+
+The internal components or "ports" within a microservice expose one or more interfaces or "adapters" that serve the needs of downstream consumers. For example, some component within a microservice may expose it's functionality over a REST, SOAP or RPC based interface. We may maintain multiple adapters for a single port at the same time or swap out the port if the need arises without the adapter having to change. Interface definition is thus pushed out to be an extrinsic configuration concern.
+
+We will attempt to keep our architectural description tool and framework agnostic. As mentioned before we want to avoid early lock in with specfic tools. To that end, all intra, inter, and extra service communication APIs will be described in language agnostic terms.
+
+The architecture we describe here is not meant to be prescriptive. The system could even be developed and deployed as a modular monolith, combining all bounded contexts in a single container, which could then be scaled by deploying multiple instances of it. This is a viable approach that can be taken initially for rapidly prototyping a minimum viable product at a reduced overall cost of development.
 
 ### Identity and Access Manager (IAM)
 
@@ -421,8 +448,8 @@ The Identity and Access Manager is a critical component of the RoadWarrior platf
 
 Given the vast user base and the need to provide real-time updates, this IAM must be highly available, scalable, and should work seamlessly with other components like the Profile Manager and Email Polling Manager. It's essential to keep the IAM system's latency low to ensure quick login and access times, meeting the performance requirements specified earlier.
 
-![IAM](/Diagrams/IAM.png)
-_Figure 10 Identity & Access Manager_
+![IAM](./diagrams/components/identity-and-access-manager.png)
+_Figure 10: Identity and Access Manager_
 
 ### Profile Manager
 
@@ -471,8 +498,8 @@ The Profile Manager component is pivotal for personalizing user experiences in t
 
 With millions of active users, the Profile Manager must ensure data integrity, quick access times, and high availability. Integration with other components ensures a seamless user experience, be it updating profile details, reviewing past trips, or setting platform preferences. The design must uphold the principles of user data privacy and ensure timely synchronization with other system components.
 
-![Profile Manager](/Diagrams/profile.png)
-_Figure 11 Profile Manager_
+![Profile Manager](./diagrams/components/profile-manager.png)
+_Figure 11: Profile Manager_
 
 ### Reservation Manager
 
@@ -526,8 +553,8 @@ The Reservation Manager is central to the RoadWarrior platform as it manages all
 
 The Reservation Manager provides a comprehensive approach to efficiently handle and present reservations to users while ensuring high reliability, accuracy, and timeliness.
 
-![Connections Manager](/Diagrams/connection.png)
-_Figure 12 Connections Manager_
+![Reservation Manager](./diagrams/components/reservation-manager.png)
+_Figure 12: Reservation Manager_
 
 ### Travel Manager
 
@@ -574,8 +601,8 @@ The Travel Manager is responsible for ensuring that all travel-related details a
 
 The Travel Manager ensures that users receive timely and accurate information about their reservations, fostering trust in the platform's capability to keep them informed.
 
-![Rewards Manager](/Diagrams/rewards.png)
-_Figure 15 Rewards Manager_
+![Travel Manager](./diagrams/components/travel-manager.png)
+_Figure 15: Travel Manager_
 
 ### Support Manager
 
@@ -624,8 +651,8 @@ The Support Manager acts as the main interface between users facing issues or se
 
 The Support Manager ensures that users receive prompt and effective assistance, reinforcing their confidence in the platform's dedication to user satisfaction.
 
-![ETL Components](/Diagrams/etl.png)
-_Figure 16 ETL Manager_
+![Support Manager](./diagrams/components/support-manager.png)
+_Figure 16: Support Manager_
 
 ### Social Sharing Manager
 
@@ -684,8 +711,8 @@ The Social Sharing Manager aims to make the sharing of travel plans and updates 
 
 The Social Sharing Manager makes sharing travel plans a seamless, user-centric experience while also ensuring that the shared information is secure and respects user privacy.
 
-![Social Media API](/Diagrams/social.png)
-_Figure 18 Social Media API Manager_
+![Social Sharing Manager](/Diagrams/social.png)
+_Figure 18: Social Sharing Manager_
 
 ### Reporting and Analytics Manager
 
@@ -736,40 +763,109 @@ The Reporting & Analytics Manager plays an instrumental role in understanding us
 
 The Reporting & Analytics Manager not only enriches the RoadWarrior platform's business insights but also amplifies user engagement by providing them with valuable summaries and potentially offering tailored travel suggestions in the future.
 
-![Reporting and Analytics](/Diagrams/reporting.png)
-_Figure 17 Reporting and Analytics_
+![Reporting and Analytics Manager](/Diagrams/reporting.png)
+_Figure 17: Reporting and Analytics Manager_
 
 ## Deployment
 
-The next diagram models a sample deployment of the Hey Blue! system on the Google Cloud Platform. A brief overview of the involved GCP services follows, along with other major cloud alternatives
+The next diagram models a sample deployment of the system on the Amazon Web Services (AWS) Platform. A brief overview of the involved AWS services follows, along with other major cloud alternatives.
 
-![gcp](/Diagrams/gcp.png)
-_Figure 19 GCP Deployment Architecture_
+![Deployment Diagram](./diagrams/deployment-diagram.png)
+_Figure 19: AWS Deployment Architecture_
 
-Cloud Run is GCP’s default server less product. It is meant for deploying containerized applications with support for horizontal scaling, load balancing and maintenance of minimum active instances in a fully cloud managed Kubernetes Cluster. In the model, cloud run is used for deploying the Connections, Profile and Rewards microservices along with the administrative dashboard application.
+### Deployment Architecture Walkthrough
 
-- Microsoft Cloud Alternative: Azure Container instances
-- Amazon Cloud Alternative: AWS Lambda
+1. **User End:** Represents user devices - browsers and mobile applications.
+2. **GitLab CI/CD:**
+   - **Git Repository:** Contains the source code of the application.
+   - **CI/CD Pipelines:** Manages the CI/CD operations, like build, test, and deploy.
+   - **Runners:** Executes the CI/CD tasks and deploys them on AWS.
+3. **AWS:**
+   - **Load Balancer (ELB):** Distributes incoming traffic across EC2 instances.
+   - **EC2 Instances:** The main servers where the Road Warrior platform runs.
+   - **Lambda Functions:** Serverless functions for smaller tasks like notifications.
+   - **RDS Database:** Database service to store user data and reservations.
+   - **ElastiCache for Redis:** Cache service for better performance.
+   - **S3 Buckets:** Stores assets like images, static files, and deployment artifacts.
+   - **SNS Notifications:** Publishes messages to subscribed endpoints or clients.
+   - **SQS Queue:** Buffers messages sent between services.
+   - **CloudWatch:** Monitors and logs for AWS services.
+   - **CloudFront:** Content Delivery Network (CDN) for serving content faster.
 
-The API gateway allows registration of endpoints for services deployed on GCP (such as Cloud Run) and allows authentication, routing, monitoring, alerting, logging, and tracing of calls to registered services. The API gateway can authenticate requests via the Firebase authentication service, which can completely stand in for the IAM service described in our architecture.
+In the deployment process:
 
-- Microsoft Cloud Alternative: Azure Application Gateway
-- Amazon Cloud Alternative: AWS API Gateway
+- Developers push code to the Git repository.
+- GitLab CI/CD pipelines are triggered, which utilize runners.
+- The runners test, build, and deploy the code onto AWS services, like EC2 instances and Lambda functions.
+- AWS infrastructure serves the application, with the ELB distributing incoming traffic, EC2 instances processing the requests, and other services like RDS, S3, and ElastiCache supporting the backend.
 
-The Pub/Sub service allows asynchronous, low latency message based communication between deployed services. We can use Pub/Sub to implement event queues and topics for async inter-service communication
+### AWS Services Used
 
-- Microsoft Cloud Alternative: Azure Service Bus and related products
-- Amazon Cloud Alternative: Amazon SQS
+#### Networking
 
-BigQuery is GCPs big data analytics and machine learning platform. It allows ingesting event streams directly from Pub/Sub.
+- Use AWS VPC to create a private network
+- Set up private and public subnets
+- Use NAT Gateways to allow outbound internet access for private subnets
+- Implement VPC Peering if there's a need for communication between VPCs
 
-- Microsoft Cloud Alternative: Azure Synapse analytics, HDInsight
-- Amazon Cloud Alternative: AWS Redshift
+#### Compute
 
-Cloud Data Fusion is GCPs most basic ETL service that provides support for pre-built as well as custom transformations and connectors that should suffice for most ETL use cases.
+- Deploy microservices on Amazon ECS (Elastic Container Service) using Docker. This provides auto-scaling, load balancing, and service discovery out-of-the-box
+- For the Email Polling Monolith, use EC2 instances with Auto Scaling Groups for failover and redundancy
 
-- Microsoft Cloud Alternative: Azure Data Factory
-- Amazon Cloud Alternative: AWS ETLeap, AWS Glue
+#### Storage
+
+- Use Amazon RDS for relational databases
+- Deploy Amazon S3 for storing user attachments and backups
+- Use EBS for block-level storage needs of EC2 instances
+
+#### Security & Authorization
+
+- Implement IAM roles and policies for granular access control
+- Use AWS Secrets Manager for sensitive data and secrets
+- Enable AWS Shield for DDoS protection
+- Use AWS WAF for web application firewall needs
+
+#### Continuous Integration and Deployment
+
+- Set up a CI/CD pipeline using AWS CodePipeline and AWS CodeBuild
+- Integrate with GitLab for source code management and triggers
+- Use AWS CodeDeploy to handle deployments, ensuring zero downtime
+
+#### Monitoring & Logging
+
+- Implement AWS CloudWatch for monitoring
+- Use Amazon CloudTrail for auditing AWS resource actions
+- Enable AWS X-Ray for tracing requests and responses
+
+#### Backup & Recovery
+
+- Regular RDS backups
+- Use Amazon S3's versioning feature for object-level recovery
+
+### Alternative Cloud Deployments
+
+#### Azure Equivalent Deployment
+
+1. **Account Setup:** Use Azure Subscriptions and Management Groups
+2. **Networking:** Deploy Azure Virtual Network with subnets
+3. **Compute:** Use Azure Kubernetes Service (AKS) for microservices and Azure VMs for monolithiccomponents.
+4. **Storage:** Use Azure SQL Database and Azure Blob Storage
+5. **Security:** Leverage Azure Active Directory and Key Vault
+6. **CI/CD:** Implement Azure DevOps for CI/CD
+7. **Monitoring & Logging:** Utilize Azure Monitor and Application Insights
+8. **Backup & Recovery:** Use Azure Backup services
+
+#### Google Cloud Platform (GCP) Equivalent Deployment
+
+1. **Account Setup:** Use GCP Organizations and Projects
+2. **Networking:** Set up Google Cloud VPC with subnets
+3. **Compute:** Deploy on Google Kubernetes Engine (GKE) for microservices and Compute Engine for monolithic components
+4. **Storage:** Use Cloud SQL and Google Cloud Storage
+5. **Security:** Implement Identity & Access Management (IAM) and use Secret Manager
+6. **CI/CD:** Utilize Cloud Build and integrate with GitLab
+7. **Monitoring & Logging:** Deploy Google Cloud Operations Suite (formerly Stackdriver)
+8. **Backup & Recovery:** Use Persistent Disk Snapshots for backups
 
 ## Cost Analysis
 
