@@ -4,11 +4,17 @@
 
 This is a team submission for [O'Reilly Architecture Katas September 2023](https://learning.oreilly.com/featured/architectural-katas/).
 
+### Team Name
+
+Renderbit Technologies
+
 ### Team Members
 
-- Soham Banerjee
-- Shreya Pramanik
-- Aditya Vikram Jajodia
+| Name                  | LinkedIn                                                                                     |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| Soham Banerjee        | [https://linkedin.in/in/sohambanerjee-kolkata](https://linkedin.in/in/sohambanerjee-kolkata) |
+| Shreya Pramanik       | [https://linkedin.in/in/pramanikshreya](https://linkedin.in/in/pramanikshreya)               |
+| Aditya Vikram Jajodia | [https://www.linkedin.com/in/avjajodia/](https://www.linkedin.com/in/avjajodia/)             |github.com/carlosalbertomenezes) | [LinkedIn](https://www.linkedin.com/in/carloscardosomenezes/?lipi=urn%3Ali%3Apage%3Ad_flagship3_people_connections%3BFZxCll5DQouFM6zHFN48zg%3D%3D) |
 
 ## Contents
 
