@@ -8,6 +8,15 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ## Contents
 
+- [Registration and Account Management](#registration-and-account-management)
+- [Email Polling and Travel Email Detection](#email-polling-and-travel-email-detection)
+- [Interfacing with Travel Systems for Updates](#interfacing-with-travel-systems-for-updates)
+- [Manual Reservation Management](#manual-reservation-management)
+- [Grouping and Archiving Reservations](#grouping-and-archiving-reservations)
+- [Social Media and Trip Sharing](#social-media-and-trip-sharing)
+- [Integration with Travel Agency for Support](#integration-with-travel-agency-for-support)
+- [Analytics and Reporting](#analytics-and-reporting)
+
 ### Registration and Account Management
 
 ![Registration and Account Management](./diagrams/user-journey-diagrams/01-registration-and-account-management.png)
