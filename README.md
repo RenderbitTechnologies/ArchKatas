@@ -39,6 +39,7 @@ Renderbit Technologies
   - [Event Storming](#event-storming)
   - [Context Diagram](#context-diagram)
 - [User Journeys](#user-journeys)
+- [Sequence Diagrams](#sequence-diagrams)
 - [Containers](#containers)
   - [Modular Monolith](#modular-monolith)
   - [Service Containers](#service-containers)
@@ -346,6 +347,10 @@ We can also plot a high-level context diagram, showing the interactions between 
 ## User Journeys
 
 We have envisioned some of the common user journeys in the platform in the user journey diagrams [here](./user-journeys.md).
+
+## Sequence Diagrams
+
+We have created sequence diagrams for some of the user journeys in the platform listed above [here](./sequence-diagrams.md).
 
 ## Containers
 
