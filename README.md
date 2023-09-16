@@ -816,7 +816,7 @@ The Social Sharing Manager aims to make the sharing of travel plans and updates 
 
 The Social Sharing Manager makes sharing travel plans a seamless, user-centric experience while also ensuring that the shared information is secure and respects user privacy.
 
-![Social Sharing Manager](/Diagrams/social.png)
+![Social Sharing Manager](./diagrams/components/social-sharing-manager.png)
 _Figure 18: Social Sharing Manager_
 
 ### Reporting and Analytics Manager
@@ -868,8 +868,32 @@ The Reporting & Analytics Manager plays an instrumental role in understanding us
 
 The Reporting & Analytics Manager not only enriches the RoadWarrior platform's business insights but also amplifies user engagement by providing them with valuable summaries and potentially offering tailored travel suggestions in the future.
 
-![Reporting and Analytics Manager](/Diagrams/reporting.png)
+![Reporting and Analytics Manager](./diagrams/components/reporting-and-analytics-manager.png)
 _Figure 17: Reporting and Analytics Manager_
+
+## System Diagram
+
+The next diagram models a high-level overview of the system and its various components,and their functional interactions with one-another, as well as with external systems and services.
+
+![System Diagram](./diagrams/system-diagram.png)
+_Figure 18: System Diagram_
+
+### System Diagram Walkthrough
+
+- **User Devices:** Represents the entry points of the system - web browsers and mobile apps.
+- **RoadWarrior Platform:** The main platform that houses all components.
+  - **User Interface:** The frontend of the platform, accessed via browsers and mobile apps.
+  - **API Server:** Processes all backend requests and operations.
+  - **Email Poller:** Scans and filters travel-related emails.
+  - **Reservation Management:** Manages user travel reservations.
+  - **Social Media Interface:** Interfaces with social media for trip sharing.
+  - **Analytics Processor:** Gathers and processes user data for insights.
+  - **Travel Agency Integration:** Integrates with travel systems like SABRE and APOLLO.
+  - **Database:** Stores user data, reservations, and other necessary information.
+- **Travel Systems:** External travel systems to fetch real-time updates.
+- **Email Providers:** Email services to poll for travel-related emails.
+- **Social Platforms:** Platforms where users can share their trips.
+
 
 ## Deployment
 
