@@ -18,12 +18,14 @@ This is a team submission for [O'Reilly Architecture Katas Summer 2023](https://
   - [Technical Constraints](#technical-constraints)
   - [Business Constraints](#business-constraints)
   - [Assumptions](#assumptions)
+  - [High-Level Components](#high-level-components)
+  - [Architectural Considerations](#architectural-considerations)
 - [Architecture Characteristics](#architecture-characteristics)
   - [Driving Characteristics](#driving-characteristics)
   - [Implicit Characteristics](#implicit-characteristics)
   - [Others Considered](#others-considered)
 - [Architecture Approach](#architecture-approach)
-  - [Goals](#goals)
+  - [Architecture Goals](#architecture-goals)
 - [Context](#context)
   - [Actors](#actors)
   - [Use Cases](#use-cases)
@@ -54,31 +56,59 @@ A new startup wants to build the next generation online trip management dashboar
 
 ### Requirements
 
-The provided requirements document is available [here](https://docs.google.com/document/d/10o-4eEzFo005pqDt_ORCztzaQCQ_9FNWYrxFasou3Eo/edit) @TODO
-
-### Adjusted Architectural Decisions and Considerations
-
-- **Scalability and Cloud Platform:** Given the projected growth rate, we'll require a cloud platform that offers the ability to scale resources up and down with ease. AWS, Google Cloud, and Azure are all great options. Given the international nature of the app, we might choose AWS due to its more extensive global data center presence.
-- **Latency and Data Centers:** We'd leverage AWS data centers in North America (US West and US East) and Western Europe (Frankfurt, London, or Paris) to reduce latency for primary markets. This might involve setting up multi-region deployments.
-- **Content Delivery Network (CDN):** To further reduce latency and provide quick static content delivery to users worldwide, we'll use a CDN like Amazon CloudFront.
+The provided requirements document is available [here](./requirements-specification.md).
 
 ### Technical Constraints
 
-- This is a greenfield technical project, the only assumed constraint is lack of existing infrastructure
+1. **Integration with Legacy Systems**: The solution must integrate with the existing travel systems like SABRE and APOLLO, which may have proprietary interfaces or limitations in terms of data access and response times.
+
+2. **Response Times**: The web interface must respond within 800ms, and the mobile interface must have a first contentful paint under 1.4 seconds.
+
+3. **Real-time Updates**: Updates from travel agencies and other systems need to be presented within the application within 5 minutes of generation.
+
+4. **Uptime**: The system must guarantee 99.9833% uptime, which translates to not more than 5 minutes of unplanned downtime per month.
+
+5. **Cross-Platform Interface**: A consistent and rich user interface must be provided across all deployment platforms, which may restrict technology choices and require additional development and testing.
+
+6. **International Availability**: The system must function across different geographical regions, accounting for potential regional restrictions and data sovereignty issues.
+
+7. **Email Polling**: The solution must interface with varied email systems to poll and extract travel-related information.
+
+8. **Data Analytics**: The system must be capable of gathering and processing large amounts of analytical data from user trips.
 
 ### Business Constraints
 
-- Non-profit organization needs to build and support the system with revenue generated from an affiliate marketing model
+1. **Privacy Concerns**: Sharing trip information on social media or with specific individuals can lead to potential privacy concerns, thus requiring robust data protection and privacy measures.
 
-- Initial funding for the project comes from grants and sponsorships
+2. **Data Validity**: The system relies on the validity of external data from airline, hotel, and car rental systems, as well as data parsed from emails, which may not always be accurate or up-to-date.
+
+3. **User Adoption**: With 15 million accounts, ensuring smooth user adoption and minimal disruption during transitions or updates is crucial.
+
+4. **Regulatory and Compliance Issues**: Operating internationally brings along various regulatory and compliance requirements related to data storage, user privacy, and more.
+
+5. **Monetization**: The startup nature of the project implies a need to eventually find revenue streams, which may not be initially clear, especially when prioritizing user adoption and experience.
+
+6. **Preferred Travel Agency Integration**: While the system integrates with a preferred travel agency for quick problem resolution, any limitations or delays from this agency directly impact the service quality.
+
+7. **Competitive Advantage**: The requirement to have better real-time updates than competitors places an ongoing need for monitoring, benchmarking, and improving system performance.
 
 ### Assumptions
 
-- The system does not support financial transactions. The citizens can browse point based discount offers provided by retailers on the app. However the actual purchase happens on the retailer's own system or in store. The system is only responsible for generating verifiable vouchers and coupons when citizens redeem points. (This was mentioned by the founder in the initial discussion)
+1. **Data Access**: Assumption that existing systems like SABRE and APOLLO will provide necessary access to data and interfaces required for real-time integration.
 
-- Charities are allowed to redeem the monetary value of points donated . Retailers must provide a way for them to do that off-system.
+2. **User Behavior**: Assumption that users will be proactive in providing access to their emails for polling and will actively use the system for manual updates and trip management.
 
-## High Level Characterstics
+3. **Uniformity of Data**: Assumption that travel-related emails follow certain patterns or templates that can be reliably identified and parsed.
+
+4. **Network Reliability**: Assumption that there will be consistent and reliable internet connectivity for real-time updates.
+
+5. **Data Analytics Readiness**: Assumption that the data gathered will be readily usable for analytics, trend predictions, and reporting without significant data cleansing or transformation.
+
+6. **Security Protocols**: Assumption that integrating with third-party systems (like travel agencies and social media platforms) will not pose significant security risks or vulnerabilities.
+
+7. **User Base Growth**: Assuming a gradual growth in the active user base, which will allow the system to scale appropriately without sudden, unplannable spikes in demand.
+
+### High-Level Components
 
 - **Web Frontend:** A responsive web application built with modern frameworks like React or Angular.
 - **Mobile App:** Native or cross-platform apps (like Flutter) to ensure optimal performance and UX.
@@ -89,6 +119,12 @@ The provided requirements document is available [here](https://docs.google.com/d
 - **Social Media Integrator:** For sharing trip details on social media platforms.
 - **Data Analytics Service:** For processing, analyzing, and reporting user trip data.
 
+### Architectural Considerations
+
+- **Scalability and Cloud Platform:** Given the projected growth rate, we'll require a cloud platform that offers the ability to scale resources up and down with ease. AWS, Google Cloud, and Azure are all great options. Given the international nature of the app, we might choose AWS due to its more extensive global data center presence.
+- **Latency and Data Centers:** We'd leverage AWS data centers in North America (US West and US East) and Western Europe (Frankfurt, London, or Paris) to reduce latency for primary markets. This might involve setting up multi-region deployments.
+- **Content Delivery Network (CDN):** To further reduce latency and provide quick static content delivery to users worldwide, we'll use a CDN like Amazon CloudFront.
+
 ## Architecture Characteristics
 
 The following section highlights the salient architecure characteristics we consider crucial to a successful implementation of the system.
@@ -97,47 +133,80 @@ The following section highlights the salient architecure characteristics we cons
 
 | Characteristics | Rationale                                                                                     | Whether Top 3? |
 |-----------------|-----------------------------------------------------------------------------------------------|----------------|
-| Scalability     | With 15 million user accounts and 2 million active users/week, the system needs to handle high traffic and user data. | Yes            |
+| **Scalability** | With 15 million user accounts and 2 million active users/week, the system needs to handle high traffic and user data. | Yes            |
 | Portability     | As an international system, it must operate across different regions and networks.            | No             |
 | Upgradeability  | To remain competitive and relevant, the system should be able to incorporate new features or updates easily.  | No             |
-| Extensibility   | Given integrations with various travel systems and potential future platforms, the architecture must be extensible. | Yes            |
-| Performance     | Fast response times are needed for both web and mobile, ensuring user satisfaction.          | Yes            |
+| **Extensibility** | Given integrations with various travel systems and potential future platforms, the architecture must be extensible. | Yes            |
+| **Performance** | Fast response times are needed for both web and mobile, ensuring user satisfaction.          | Yes            |
 | Availability    | With a max of 5 minutes of unplanned downtime per month, the system requires high availability.  | No             |
 
 ### Implicit Characteristics
 
-**Security**
+#### Security
+
 We are transmitting and maintaining user's personal data such as their emails, phone numbers and locations over the web. The data needs to be secured in transit and at rest using appropriate encryption mechanisms. Also, there is need for data de-identification mechanisms and zero-trust verification policies when data needs to be accessed by the development team, admistrative users or other business stakeholders.
-**Usability**
+
+#### Usability
+
 The system is meant to accessed via mobile apps primarily by non-technical users. The need for it to be intuitive and usable is implicit.
-**Cost**
-The system needs to be cost-effective as it needs to support millions of users with a very high throughput.
+
+#### Cost
+
+The system needs to be cost-effective as it needs to support millions of users with a high throughput and concurrent user load.
 
 ### Others Considered
 
-**Reliability**
-While the system is not mission critical, and cost of downtime is low, it still needs to be reliable enough to serve it's existing user base and onboard new ones without service interruptions
-**Recoverability**
+#### Reliability
+
+As the system is mission critical, and cost of downtime is high, it needs to be highly reliable to serve it's existing user base and onboard new ones without service interruptions.
+
+#### Recoverability
+
 In case of service downtime, the system needs to be able to recover in a consistent state.
 
 ## Architecture Approach
 
-- We begin with identifying the significant architecture characteristics relevant to our proposed solution, these will be the driving factors that impact our design and architecure decisions
+1. **Decoupled Microservices Architecture**
 
-- We will use the C4 model to describe our solution initially treating the system as black box while identifying external actors and use cases. At each subsequent level we will zoom into the black box to describe the containers, its consitituent components, their inter-dependencies and communcation mechanisms
-- We use the event storming process to determine the bounded contexts and aggregates within the proposed system.
-- We will compose the architecture as a set of cohesive microservices with both synchronous and event driven communication mechanisms. We will desribe these microservices in a tool and technology agnostic manner, see [ADR1 - Microservices Architecture](ADRs/ADR01-Microservices-architecture.md).
-@TODO
+    Given the requirement for scalability, especially with a potential of 2 million active users a week and the need to process real-time updates from various external systems, a microservices architecture offers decoupled services that can individually scale based on demand. For instance, the service handling email polling might be scaled differently from the service managing travel updates.
 
-### Goals
+2. **Event-Driven Design**
 
-**"Microservices are not the goal, you don't win by having microservices"** - Sam Newman
+    Considering the need for real-time updates and interactions between multiple components, adopting an event-driven design allows the system to react to changes and updates efficiently. It aids in ensuring updates are presented in the app within the desired 5-minute timeframe.
 
-- The architecture we describe here is not meant to be prescriptive. The Hey Blue! system could even be developed and deployed as a modular monolith, combining all bounded contexts in a single container, which could then be scaled by deploying multiple instances of it. This is a viable approach that can be taken initially for rapidly prototyping a minimum viable product at a reduced overall cost of development.
-- We apply the priciple of Hexagonal Architecture to model individual microservices. The internal components or "ports" within a microservice expose one or more interfaces or "adapters" that serve the needs of downstream consumers. For example, some component within a microservice may expose it's functionality over a REST, SOAP or RPC based interface. We may maintain multiple adapters for a single port at the same time or swap out the port if the need arises without the adapter having to change. Interface definition is thus pushed out to be an extrinsic configuration concern. Also see [ADR02 - Hexagonal Microservices](ADRs/ADR02-Hexagonal-microservices.md)
-- We will attempt to keep our architectural description tool and framework agnostic. As mentioned before we want to avoid early lock in with specfic tools. To that end, all intra, inter, and extra service communication APIs will be described in language agnostic terms. See [ADR03 - REST over http and websockets](ADRs/ADR03-Rest-over-http-and-websockets.md)
+3. **Cloud-Native Deployment**
 
-**A discussion regarding architecture characteristics and microservices**
+    To ensure high availability and meet the technical requirements of max 5 minutes unplanned downtime per month, a cloud-native deployment approach on platforms like AWS, Azure, or GCP would be pursued. These platforms provide the necessary tooling and infrastructure to ensure high availability, backups, and disaster recovery.
+
+4. **Integration Gateways**
+
+    Given the need to integrate with various external systems like SABRE, APOLLO, and social media platforms, dedicated integration gateways would be set up. These gateways would handle the specifics of communicating with each external system, offering a consistent interface to the internal components.
+
+5. **Data Lakes for Analytics**
+
+    Considering the analytical requirements and trend analysis, a data lake approach would be used to store raw data from various sources. This allows for efficient big data processing and ensures that analytical processes don't impact the operational efficiency of the system.
+
+6. **Global Content Delivery & Data Localization**
+
+    Given the international user base, a CDN (Content Delivery Network) approach would ensure that static content is delivered fast across the globe. Simultaneously, data localization strategies would be employed to ensure compliance with international data laws.
+
+### Architecture Goals
+
+1. **Scalability**: The architecture should support the platform's growth in terms of user numbers, data volume, and processing demands. It should effectively handle the demands of 2 million active users/week and beyond.
+
+2. **Resilience & Availability**: With a technical requirement of max 5 minutes unplanned downtime per month, the system should be designed with redundancy, failovers, and quick recovery mechanisms.
+
+3. **Integration Flexibility**: With many external systems to integrate with, the architecture should provide a flexible and maintainable approach to integrations. This ensures long-term viability even when external systems evolve or change.
+
+4. **Data Security & Privacy**: Given the sensitive nature of travel data and the need to poll users' emails, the system should prioritize data security and user privacy, aligning with GDPR and other global data protection standards.
+
+5. **Operational Efficiency**: To ensure updates within 5 minutes and web response times within 800ms, the system's operational efficiency is paramount. Efficient data pipelines, optimized databases, and streamlined processing are essential.
+
+6. **Extensibility**: As user needs evolve and new features or integrations are required, the architecture should support easy extensibility without major overhauls. This includes the potential for future monetization strategies or new analytical insights.
+
+7. **User Experience Focus**: With a requirement for a rich user interface across all platforms, the architecture should support seamless user experiences, fast load times, and intuitive interactions.
+
+### A discussion regarding architecture characteristics and microservices
 
 Figure 1 shows how our top 3 architecture characteristics score against formal system architecture styles.
 
