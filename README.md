@@ -35,9 +35,9 @@ Renderbit Technologies
   - [Architecture Characteristics Evaluation](#architecture-characteristics-evaluation)
   - [Choice of Architecture](#choice-of-architecture)
 - [Context](#context)
-  - [Actors](#actors)
-  - [Use Cases](#use-cases)
+  - [Actors and Use Cases](#actors-and-use-cases)
   - [Event Storming](#event-storming)
+  - [Context Diagram](#context-diagram)
 - [User Journeys](#user-journeys)
   - [Registration and Account Management](#registration-and-account-management)
   - [Email Polling and Travel Email Detection](#email-polling-and-travel-email-detection)
@@ -87,7 +87,7 @@ A new startup wants to build the next generation online trip management dashboar
 
 ### Requirements
 
-The provided requirements document is available [here](./requirements-specification.md).
+The provided requirements document is available [here](./requirements/requirements-specification.md).
 
 ### Technical Constraints
 
@@ -315,7 +315,7 @@ We start modelling the architecture of the system by envisioning the entire syst
 
 The users of the application fall into 2 categories. The public users will interact with the system using a mobile app, while the administrative and organisational use cases are more back end related, like analytics, reporting etc. Admin users will interact with the system through a web-based dashboard.
 
-![blackBox](/Diagrams/blackbox.png)
+![Use Cases](./diagrams/context-diagram/actors-and-use-cases.png)
 _Figure 2: Use Cases_
 
 ### Event Storming
@@ -344,7 +344,7 @@ We can also plot a high-level context diagram, showing the interactions between 
 
 #### Context Diagram Legend
 
-- **The Road Warrior Dashboard:** Our main system where all functionalities reside.
+- **The RoadWarrior Dashboard:** Our main system where all functionalities reside.
 - **Users:** Travelers accessing the system via web or mobile.
 - **Email:** System to poll and filter travel-related emails.
 - **SABRE & APOLLO:** Existing travel systems providing real-time updates.
@@ -362,34 +362,34 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ![Registration and Account Management](./diagrams/user-journey-diagrams/01-registration-and-account-management.png)
 
-1. **Start**: The user initiates their journey into the Road Warrior platform.
-2. **Open Road Warrior Dashboard**: The user accesses the main entry point of the application, the dashboard. Here they're presented with various options, including the ability to sign in or sign up.
+1. **Start**: The user initiates their journey into the RoadWarrior platform.
+2. **Open RoadWarrior Dashboard**: The user accesses the main entry point of the application, the dashboard. Here they're presented with various options, including the ability to sign in or sign up.
 3. **Choose Sign Up**: Instead of logging in, the user decides to create a new account. They select the "Sign Up" option.
 4. **Enter Personal Details**: A registration form is presented, where the user is prompted to enter their personal details. This could include their name, email address, password, and perhaps other relevant information like contact number or address.
-5. **Verify Email**: To ensure the authenticity of the provided email and to prevent fraudulent sign-ups, the user is sent a verification link or code to the email address they provided. They must access their email, retrieve the code or click the link, and enter or confirm it on the Road Warrior platform to verify their email address.
+5. **Verify Email**: To ensure the authenticity of the provided email and to prevent fraudulent sign-ups, the user is sent a verification link or code to the email address they provided. They must access their email, retrieve the code or click the link, and enter or confirm it on the RoadWarrior platform to verify their email address.
 6. **Set Up Account Preferences**: Once verified, the user is redirected to an account setup page. Here they can customize their account preferences, like setting up their preferred travel modes, linking frequent flier numbers, or choosing notification settings.
-7. **End**: Having successfully registered and set up their account preferences, the user's registration journey concludes. They are now a registered member of the Road Warrior platform and can start using its features fully.
+7. **End**: Having successfully registered and set up their account preferences, the user's registration journey concludes. They are now a registered member of the RoadWarrior platform and can start using its features fully.
 
 ### Email Polling and Travel Email Detection
 
 ![Email Polling and Travel Email Detection](./diagrams/user-journey-diagrams/02-email-polling-and-travel-email-detection.png)
 
-1. **Start**: The journey commences as the user interacts with the Road Warrior platform.
-2. **User Logs In**: The user signs into their Road Warrior account. This authentication allows the system to access the user's linked email for the polling process.
+1. **Start**: The journey commences as the user interacts with the RoadWarrior platform.
+2. **User Logs In**: The user signs into their RoadWarrior account. This authentication allows the system to access the user's linked email for the polling process.
 3. **System Polls Emails**: After successful login, the system automatically begins polling the user's linked email account, searching for new emails.
 4. **Filter Travel-Related Emails**: The system filters the fetched emails, identifying those that are potentially travel-related based on specific keywords, patterns, or sender addresses.
 5. **Whitelist Certain Emails**: From the identified travel-related emails, the system further filters the list by whitelisting certain trusted senders or email formats, ensuring the information extracted is accurate and reliable.
 6. **Store Travel Details**: Once the relevant emails are selected, the system extracts travel details, such as reservation information, dates, flight numbers, etc., and stores them within the user's account for easy access and organization.
-7. **End**: The email polling and travel detail extraction process concludes. The user can now view and manage their updated travel details on the Road Warrior dashboard.
+7. **End**: The email polling and travel detail extraction process concludes. The user can now view and manage their updated travel details on the RoadWarrior dashboard.
 
 ### Interfacing with Travel Systems for Updates
 
 ![Interfacing with Travel Systems for Updates](./diagrams/user-journey-diagrams/03-interfacing-with-travel-systems-for-updates.png)
 
-1. **Start**: The process kicks off when the Road Warrior platform is actively monitoring for travel updates.
+1. **Start**: The process kicks off when the RoadWarrior platform is actively monitoring for travel updates.
 2. **System Detects Travel Change**: Through continuous monitoring, the system detects a potential change or update related to a user's travel plans. This could be through various means such as scanning notifications, API callbacks, or direct communications from integrated travel systems.
 3. **Request Details from SABRE/APOLLO**: The system reaches out to the corresponding travel system (e.g., SABRE or APOLLO) to fetch detailed information regarding the detected change.
-4. **Receive Real-Time Updates**: The Road Warrior platform gets real-time updates about the user's travel itinerary, such as flight delays, cancellations, hotel booking modifications, etc., from the travel systems.
+4. **Receive Real-Time Updates**: The RoadWarrior platform gets real-time updates about the user's travel itinerary, such as flight delays, cancellations, hotel booking modifications, etc., from the travel systems.
 5. **Update User's Reservation Details**: Based on the received information, the system promptly updates the user's reservation details in the dashboard to reflect the recent changes.
 6. **Send Notification to User**: Once the updates are made, the platform immediately notifies the user about the changes through their preferred communication channel - this could be via the app, SMS, email, or push notifications.
 7. **End**: The process of fetching and updating the user's travel information concludes, ensuring the user is always kept in the loop regarding any changes to their itinerary.
@@ -398,8 +398,8 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ![Manual Reservation Management](./diagrams/user-journey-diagrams/04-manual-reservation-management.png)
 
-1. **Start**: The process begins when a user wants to manually manage their reservations on the Road Warrior platform.
-2. **User Logs In**: The user logs into the Road Warrior dashboard to access their personal travel details.
+1. **Start**: The process begins when a user wants to manually manage their reservations on the RoadWarrior platform.
+2. **User Logs In**: The user logs into the RoadWarrior dashboard to access their personal travel details.
 3. **Open Reservations Section**: After logging in, the user navigates to the reservations section of the dashboard where they can view and manage all their travel reservations.
 4. **Choose Add/Update/Delete**: In the reservations section, the user has the option to either add a new reservation, update an existing one, or delete a reservation.
 5. **Enter Reservation Details**: Depending on the chosen action (Add/Update), the user is prompted to enter or modify the relevant reservation details, such as flight information, hotel bookings, car rentals, etc.
@@ -410,8 +410,8 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ![Grouping and Archiving Reservations](./diagrams/user-journey-diagrams/05-grouping-and-archiving-reservations.png)
 
-1. **Start**: The user decides to organize their reservations on the Road Warrior platform.
-2. **User Logs In**: To initiate the process, the user logs into their Road Warrior dashboard.
+1. **Start**: The user decides to organize their reservations on the RoadWarrior platform.
+2. **User Logs In**: To initiate the process, the user logs into their RoadWarrior dashboard.
 3. **View All Reservations**: After logging in, the user can see a list or grid of all their reservations.
 4. **Group Reservations by Trip**: From the displayed reservations, the user has the ability to group multiple reservations together based on a specific trip. This can include grouping flights, hotels, and car rentals for a single trip.
 5. **Trip Completed?**: The system checks or prompts the user to verify if the grouped trip has been completed.
@@ -422,8 +422,8 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ![Social Media and Trip Sharing](./diagrams/user-journey-diagrams/06-social-media-and-trip-sharing.png)
 
-1. **Start**: The user initiates the process to share their trip details on the Road Warrior platform.
-2. **User Logs In**: The user securely logs into their Road Warrior dashboard.
+1. **Start**: The user initiates the process to share their trip details on the RoadWarrior platform.
+2. **User Logs In**: The user securely logs into their RoadWarrior dashboard.
 3. **Select Trip Details**: After successful login, the user navigates to their reservations or trip details they wish to share.
 4. **Choose Share Option**: A 'share' or 'broadcast' option is available for the user to initiate the sharing process.
 5. **Select Social Media/Specific People**: The user is presented with options to share their trip details on popular social media platforms or directly with specific people through email or messaging.
@@ -434,9 +434,9 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 ![Integration with Travel Agency for Support](./diagrams/user-journey-diagrams/07-integration-with-travel-agency-for-support.png)
 
-1. **Start**: The journey begins when the user faces any travel-related issue or requires assistance on the Road Warrior platform.
+1. **Start**: The journey begins when the user faces any travel-related issue or requires assistance on the RoadWarrior platform.
 2. **User Faces Issue**: While using the platform or during their travel, the user encounters a problem or has a query.
-3. **Contact Preferred Travel Agency**: The user utilizes the in-app feature to reach out to their preferred travel agency, integrated with the Road Warrior system, for direct and immediate support.
+3. **Contact Preferred Travel Agency**: The user utilizes the in-app feature to reach out to their preferred travel agency, integrated with the RoadWarrior system, for direct and immediate support.
 4. **Agency Provides Support**: The integrated travel agency receives the user's request and provides necessary assistance, be it changes in reservations, clarifications, or other support.
 5. **Issue Resolved**: The travel agency successfully addresses the user's issue, and the user is satisfied with the resolution provided.
 6. **End**: The user continues to use the platform, and their interaction for this specific support journey concludes.
@@ -446,7 +446,7 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 ![Analytics and Reporting](./diagrams/user-journey-diagrams/08-analytics-and-reporting.png)
 
 1. **Start**: The user journey begins when the user decides to analyze their travel patterns or requires a summary of their travel data.
-2. **User Requests End-of-Year Report**: On the Road Warrior platform, the user initiates a request for an end-of-year summary, which encompasses details of all their travels, reservations, expenses, and more.
+2. **User Requests End-of-Year Report**: On the RoadWarrior platform, the user initiates a request for an end-of-year summary, which encompasses details of all their travels, reservations, expenses, and more.
 3. **System Gathers User's Travel Data**: In response to the request, the system initiates a process to collect all pertinent travel data associated with the user's account for the specified year.
 4. **Generate Comprehensive Report**: Once all data is collected, the system processes and compiles this information to create a detailed and comprehensive report. This report contains metrics, travel patterns, and insights tailored for the user.
 5. **Display Report to User**: The generated report is presented to the user through the platform's interface, allowing them to view, analyze, and even download for their records.
@@ -457,55 +457,57 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 ### Modular Monolith
 
 The event storming process described in the previous section allowed us to identify the bounded contexts of our system and the aggregates (components) within them. We now map each bounded context to be a module of our overall system. The resulting modular monolith is depicted in the following diagram.
-![Modular Monolith](/Diagrams/modmono.png)
-_Figure 6 Modular Monolith_
+![Modular Monolith](./diagrams/containers/modular-monolith.png)
+_Figure 6: Modular Monolith_
 
 ### Service Containers
 
 The previous section described a single container, comprising of multiple modules. It did not give us any information about how the modules are coupled. The next step therefore is to segregate the container along the boundaries of our bounded contexts. The following diagram illustrates the the interactions between the various microservices and the external actors.
 
-**Note**
-Synchronous communication coupling between the services is omitted from this diagram for clarity, but it is shown in figure 9 and discussed in the related section
+#### Communications between Service Containers
 
-![Service Containers](/Diagrams/containers.png)
-_Figure 7 Service Containers_
+Synchronous communication coupling between the services is omitted from this diagram for clarity, but it is shown in details and discussed in the related section below.
+
+![Service Containers](./diagrams/containers/containers.png)
+_Figure 7: Service Containers_
 
 ### API Layer
 
-Next, we add an API layer to extract the publically accessible interface of the system. Instead of external users directly connecting to the individual services via a GUI, all external requests will be routed through the API layer. Also see [ADR04-API-layer](/ADRs/ADR04-API-Layer.md)
+Next, we add an API layer to extract the publically accessible interface of the system. Instead of external users directly connecting to the individual services via a GUI, all external requests will be routed through the API layer.
 
-![API Layer](/Diagrams/apiLayer.png)
-_Figure 8 API Layer_
+![API Layer](./diagrams/containers/api-layer.png)
+_Figure 8: API Layer_
 
-**Note**
-In the above diagram, the API layer only serves requests from public mobile-app based clients. This is on purpose, the administrative/organizational users will make up a small fraction of the total user base of the system. Their use cases are also different from reqular users, thus it makes sense for them to have separate APIs for accessing relevant services. Identity, access control and authentication mechanisms for administrative users are also significantly different from those of public users who do not have access to internal infrastructure, data and services.
+#### Public and Private APIs
 
-### Coupling and Architecture Quanta
+In the RoadWarrior platform's architecture, the distinction between a Public and Private API Gateway is pivotal for streamlined operations and enhanced security. The **Public API Gateway** is tailored for the vast user base—travelers and third-party partners—prioritizing user-friendliness, availability, and robust security measures. On the other hand, the **Private API Gateway** serves the platform's internal teams and administrators, providing them with advanced tools, detailed logging, and in-depth access to manage and monitor the system effectively. This segregation not only optimizes user experience based on roles but also fortifies the system's security by ensuring restricted access where necessary.
 
-Finally we close out the service containers section with a discussing of coupling between the services and architecure quanta.
+### Coupling
 
-The previous diagram showed 8 distinct containers including the API layer.
+Finally we close out the service containers section with a discussing of coupling between the services.
+
+The previous diagram showed several distinct containers including the API layer.
+
 Since the API layer is simply a proxy, it does not include any domain specific functionality or perform any workflow orchestration, we can omit it from this section.
 
 The following diagram illustrates how the remaining services are coupled, that databases they own or share, and the domain entities in those databases.
 
-![quanta](/Diagrams/quanta.png)
-_Figure 9 Coupling and Quanta_
+![Coupling](./diagrams/containers/coupling.png)
+_Figure 9: Coupling_
 
 #### Static Coupling
 
-- The ETL service and the Rewards Manager microservice are statically coupled through a shared database. We could make a case for separating transactions from master data into two separate databases, where ETL only writes to the master database and Rewards manager only reads from it as shown in the diagram. This however does not do much to reduce the contract coupling introduced by shared data they have to work with. The diagram shows to separate databases for clarity and semantic reasons
+- The Support Manager service and the Profile Manager microservice are statically coupled through a shared database. We could make a case for separating transactions from master data into two separate databases, where Profile Manager only writes to the master database and Support Manager manager only reads from it as shown in the diagram. This however does not do much to reduce the contract coupling introduced by shared data they have to work with. The diagram shows to separate databases for clarity and semantic reasons.
 
 #### Dynamic Coupling
 
-- The Profile service synchronously requests data from IAM service
-- The Rewards and Connections services synchronously requests data from the Profile service
-- The Profile service asynchronously ingests messages/events from Rewards and Connections services
-- The Reporting and analytics service asynchronously ingests messages/events from the Profile service
+- The Profile Manager service synchronously requests data from IAM service
+- The Reservation Manager and Reports & Analytics Manager services asynchronously requests data from the Profile service (Email Configuration)
+- The Profile service asynchronously ingests messages/events from Reservation Manager service (Email Polling)
+- The Reporting and Analytics Manager service asynchronously ingests messages/events from the Reservation Manager service
+- The Reservation Manager service asynchronously ingests messages/events from the Travel Manager service (Trip Updates)
 
-The Social Media API does not depend upon any other services, it is invoked directly from admin dashboards. It is in a sort of middle ground, where it’s trivial enough not warrant it’s own Microservice, but semantically it does not make sense to make it part of other services we have defined.
-
-Given the shared database between the ETL and Rewards service, the system architecure has a quanta of 6, illustrated by the dashed lines in the above diagram.
+The Social Sharing Manager service does not depend upon any other services, it is invoked directly from Profile Manager service. It is in a sort of middle ground, where it’s trivial enough not warrant it’s own microservice, but semantically it does not make sense to make it part of other services we have defined.
 
 ## Components
 
@@ -918,7 +920,6 @@ _Figure 18: System Diagram_
 - **Email Providers:** Email services to poll for travel-related emails.
 - **Social Platforms:** Platforms where users can share their trips.
 
-
 ## Deployment
 
 The next diagram models a sample deployment of the system on the Amazon Web Services (AWS) Platform. A brief overview of the involved AWS services follows, along with other major cloud alternatives.
@@ -935,7 +936,7 @@ _Figure 19: AWS Deployment Architecture_
    - **Runners:** Executes the CI/CD tasks and deploys them on AWS.
 3. **AWS:**
    - **Load Balancer (ELB):** Distributes incoming traffic across EC2 instances.
-   - **EC2 Instances:** The main servers where the Road Warrior platform runs.
+   - **EC2 Instances:** The main servers where the RoadWarrior platform runs.
    - **Lambda Functions:** Serverless functions for smaller tasks like notifications.
    - **RDS Database:** Database service to store user data and reservations.
    - **ElastiCache for Redis:** Cache service for better performance.
