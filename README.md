@@ -59,6 +59,8 @@ Renderbit Technologies
   - [Support Manager](#support-manager)
   - [Social Sharing Manager](#social-sharing-manager)
   - [Reporting and Analytics Manager](#reporting-and-analytics-manager)
+- [System Diagram](#system-diagram)
+  - [System Diagram Walkthrough](#system-diagram-walkthrough)
 - [Deployment](#deployment)
   - [Deployment Architecture Walkthrough](#deployment-architecture-walkthrough)
   - [AWS Services Used](#aws-services-used)
@@ -311,28 +313,44 @@ We start modelling the architecture of the system by envisioning the entire syst
 
 ### Actors and Use Cases
 
-The users of the application fall into 2 categories. The public users will interact with the system using a mobile app, while the administrative and organisational use cases are more back end related, like data upload and ETL, reporting etc. Admin/Org users will interact with the system through a web based dashboard.
+The users of the application fall into 2 categories. The public users will interact with the system using a mobile app, while the administrative and organisational use cases are more back end related, like analytics, reporting etc. Admin users will interact with the system through a web-based dashboard.
 
 ![blackBox](/Diagrams/blackbox.png)
-_Figure 2 Use Cases_
+_Figure 2: Use Cases_
 
 ### Event Storming
 
 The next step is zooming into the black box. The prerequisite to our goal of modelling the system as a set of independent microservices is to start with domain partitioning. To accomplish this we used the event storming process.
 Event-storming begins with initially identifying "Domain Events". A Domain event is something that happens within the system. It is described by a ubiquitous language entity followed by a verb or action on that entity. Each use case in Figure 2 maps to one or more domain events shown here. As per the process, we identify as many domain events as we can and put each one on an orange sticky note on a virtual whiteboard.
 
-![Ad-Hoc Domain Events](/Diagrams/domainEvents.png)
-_Figure 3 Domain Events_
+![Ad-Hoc Domain Events](./diagrams/context-diagram/domain-events.png)
+_Figure 3: Domain Events_
 
-Subsequently we identify the commands that trigger these domain events. While a domain event is something that happens within the system, the command is the action that triggers a series of domain events. Commands invoked by external actors are explicitly identified. Certain commands do not have an associated actor, which implies that it was invoked internally within the system. We organise the related sets of commands and domain events together into sets of related aggregates.
-![adding commands](/Diagrams/commandsAndActors.png)
-_Figure 4 Commands, Actors and Aggregates_
+Subsequently, we identify the commands that trigger these domain events. While a domain event is something that happens within the system, the command is the action that triggers a series of domain events. Commands invoked by external actors are explicitly identified. Certain commands do not have an associated actor, which implies that it was invoked internally within the system. We organise the related sets of commands and domain events together into sets of related aggregates.
+![adding commands](./diagrams/context-diagram/commands-and-actors.png)
+_Figure 4: Commands, Actors and Aggregates_
 
 Next we determine the automation policies for the commands that do not have an associated external actor and are triggered when a certain domain event completes. The automation policies indicate asynchronous communication coupling between the bounded contexts. Grouping the semantically related aggregates together gives us the bounded contexts and the blueprint for individual microservices.
-![bounded contexts](/Diagrams/automationPolicies.png)
-_Figure 5 Automation Policies and Bounded Contexts_
+![bounded contexts](./diagrams/context-diagram/automation-and-bounded-contexts.png)
+_Figure 5: Automation Policies and Bounded Contexts_
 
-The above diagram gives us the boundaries of our bounded contexts and the event driven connections between them
+The above diagram gives us the boundaries of our bounded contexts and the event driven connections between them.
+
+### Context Diagram
+
+We can also plot a high-level context diagram, showing the interactions between various systems and sub-systems across various domain events and automations.
+
+![Context Diagram](./diagrams/context-diagram/context-diagram.png)
+
+#### Context Diagram Legend
+
+- **The Road Warrior Dashboard:** Our main system where all functionalities reside.
+- **Users:** Travelers accessing the system via web or mobile.
+- **Email:** System to poll and filter travel-related emails.
+- **SABRE & APOLLO:** Existing travel systems providing real-time updates.
+- **Social Media:** Platforms like Facebook, Twitter where users share their trips.
+- **Travel Agency:** Provides quick support for users facing issues.
+- **Analytics:** Processes and analyzes the travel data for generating insights.
 
 ## User Journeys
 
