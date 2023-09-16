@@ -1,4 +1,4 @@
-# ADR-10: Message Broker & Event System Strategy
+# ADR-10: Message Broker and Event System Strategy
 
 ## Status
 

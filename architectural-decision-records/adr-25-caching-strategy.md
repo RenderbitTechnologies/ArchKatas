@@ -1,4 +1,4 @@
-# ADR-25: Caching Mechanism Strategy
+# ADR-25: Caching Strategy
 
 ## Status
 

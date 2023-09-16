@@ -1,4 +1,4 @@
-# ADR-26: Content Management System Strategy
+# ADR-26: Content Management Strategy
 
 ## Status
 

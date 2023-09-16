@@ -1,4 +1,4 @@
-# ADR-27: User Notification System Strategy
+# ADR-27: User Notifications Strategy
 
 ## Status
 

@@ -1,4 +1,4 @@
-# ADR-19: Scaling Strategy
+# ADR-19: Auto-Scaling Strategy
 
 ## Status
 

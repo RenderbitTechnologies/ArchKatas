@@ -1,4 +1,4 @@
-# ADR-28: Feedback and Support System Integration Strategy
+# ADR-28: Feedback and Support Strategy
 
 ## Status
 
