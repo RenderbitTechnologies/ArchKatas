@@ -250,7 +250,7 @@ _Figure 2: Key Architectural Characteristics_
 Figure 2 shows how our top 3 architecture characteristics score against formal system architecture styles.
 
 ![Architecture Styles](./diagrams/architecture-styles-diagram.png)
-_Figure 2: Architecture Styles_
+_Figure 3: Architecture Styles_
 
 ### Choice of Architecture
 
@@ -316,7 +316,7 @@ We start modelling the architecture of the system by envisioning the entire syst
 The users of the application fall into 2 categories. The public users will interact with the system using a mobile app, while the administrative and organisational use cases are more back end related, like analytics, reporting etc. Admin users will interact with the system through a web-based dashboard.
 
 ![blackBox](/Diagrams/blackbox.png)
-_Figure 2: Use Cases_
+_Figure 4: Use Cases_
 
 ### Event Storming
 
@@ -324,15 +324,15 @@ The next step is zooming into the black box. The prerequisite to our goal of mod
 Event-storming begins with initially identifying "Domain Events". A Domain event is something that happens within the system. It is described by a ubiquitous language entity followed by a verb or action on that entity. Each use case in Figure 2 maps to one or more domain events shown here. As per the process, we identify as many domain events as we can and put each one on an orange sticky note on a virtual whiteboard.
 
 ![Ad-Hoc Domain Events](./diagrams/context-diagram/domain-events.png)
-_Figure 3: Domain Events_
+_Figure 5: Domain Events_
 
 Subsequently, we identify the commands that trigger these domain events. While a domain event is something that happens within the system, the command is the action that triggers a series of domain events. Commands invoked by external actors are explicitly identified. Certain commands do not have an associated actor, which implies that it was invoked internally within the system. We organise the related sets of commands and domain events together into sets of related aggregates.
 ![adding commands](./diagrams/context-diagram/commands-and-actors.png)
-_Figure 4: Commands, Actors and Aggregates_
+_Figure 6: Commands, Actors and Aggregates_
 
 Next we determine the automation policies for the commands that do not have an associated external actor and are triggered when a certain domain event completes. The automation policies indicate asynchronous communication coupling between the bounded contexts. Grouping the semantically related aggregates together gives us the bounded contexts and the blueprint for individual microservices.
 ![bounded contexts](./diagrams/context-diagram/automation-and-bounded-contexts.png)
-_Figure 5: Automation Policies and Bounded Contexts_
+_Figure 7: Automation Policies and Bounded Contexts_
 
 The above diagram gives us the boundaries of our bounded contexts and the event driven connections between them.
 
@@ -458,7 +458,7 @@ Please note that the user journeys listed here are not exhaustive, and are inste
 
 The event storming process described in the previous section allowed us to identify the bounded contexts of our system and the aggregates (components) within them. We now map each bounded context to be a module of our overall system. The resulting modular monolith is depicted in the following diagram.
 ![Modular Monolith](/Diagrams/modmono.png)
-_Figure 6 Modular Monolith_
+_Figure 8 Modular Monolith_
 
 ### Service Containers
 
@@ -468,14 +468,14 @@ The previous section described a single container, comprising of multiple module
 Synchronous communication coupling between the services is omitted from this diagram for clarity, but it is shown in figure 9 and discussed in the related section
 
 ![Service Containers](/Diagrams/containers.png)
-_Figure 7 Service Containers_
+_Figure 9 Service Containers_
 
 ### API Layer
 
 Next, we add an API layer to extract the publically accessible interface of the system. Instead of external users directly connecting to the individual services via a GUI, all external requests will be routed through the API layer. Also see [ADR04-API-layer](/ADRs/ADR04-API-Layer.md)
 
 ![API Layer](/Diagrams/apiLayer.png)
-_Figure 8 API Layer_
+_Figure 10 API Layer_
 
 **Note**
 In the above diagram, the API layer only serves requests from public mobile-app based clients. This is on purpose, the administrative/organizational users will make up a small fraction of the total user base of the system. Their use cases are also different from reqular users, thus it makes sense for them to have separate APIs for accessing relevant services. Identity, access control and authentication mechanisms for administrative users are also significantly different from those of public users who do not have access to internal infrastructure, data and services.
@@ -490,7 +490,7 @@ Since the API layer is simply a proxy, it does not include any domain specific f
 The following diagram illustrates how the remaining services are coupled, that databases they own or share, and the domain entities in those databases.
 
 ![quanta](/Diagrams/quanta.png)
-_Figure 9 Coupling and Quanta_
+_Figure 11 Coupling and Quanta_
 
 #### Static Coupling
 
@@ -521,7 +521,7 @@ The following section describes the internal components of each microservice ide
 
 The components can be visualized in a hexagonal microservices-oriented architecture pattern in the diagram below:
 ![Component Diagram](./diagrams/hexagonal-component-diagram.png)
-_Figure 5: Component Diagram_
+_Figure 12: Component Diagram_
 
 The internal components or "ports" within a microservice expose one or more interfaces or "adapters" that serve the needs of downstream consumers. For example, some component within a microservice may expose it's functionality over a REST, SOAP or RPC based interface. We may maintain multiple adapters for a single port at the same time or swap out the port if the need arises without the adapter having to change. Interface definition is thus pushed out to be an extrinsic configuration concern.
 
@@ -578,7 +578,7 @@ The Identity and Access Manager is a critical component of the RoadWarrior platf
 Given the vast user base and the need to provide real-time updates, this IAM must be highly available, scalable, and should work seamlessly with other components like the Profile Manager and Email Polling Manager. It's essential to keep the IAM system's latency low to ensure quick login and access times, meeting the performance requirements specified earlier.
 
 ![IAM](./diagrams/components/identity-and-access-manager.png)
-_Figure 10: Identity and Access Manager_
+_Figure 13: Identity and Access Manager_
 
 ### Profile Manager
 
@@ -628,7 +628,7 @@ The Profile Manager component is pivotal for personalizing user experiences in t
 With millions of active users, the Profile Manager must ensure data integrity, quick access times, and high availability. Integration with other components ensures a seamless user experience, be it updating profile details, reviewing past trips, or setting platform preferences. The design must uphold the principles of user data privacy and ensure timely synchronization with other system components.
 
 ![Profile Manager](./diagrams/components/profile-manager.png)
-_Figure 11: Profile Manager_
+_Figure 14: Profile Manager_
 
 ### Reservation Manager
 
@@ -683,7 +683,7 @@ The Reservation Manager is central to the RoadWarrior platform as it manages all
 The Reservation Manager provides a comprehensive approach to efficiently handle and present reservations to users while ensuring high reliability, accuracy, and timeliness.
 
 ![Reservation Manager](./diagrams/components/reservation-manager.png)
-_Figure 12: Reservation Manager_
+_Figure 15: Reservation Manager_
 
 ### Travel Manager
 
@@ -731,7 +731,7 @@ The Travel Manager is responsible for ensuring that all travel-related details a
 The Travel Manager ensures that users receive timely and accurate information about their reservations, fostering trust in the platform's capability to keep them informed.
 
 ![Travel Manager](./diagrams/components/travel-manager.png)
-_Figure 15: Travel Manager_
+_Figure 16: Travel Manager_
 
 ### Support Manager
 
@@ -781,7 +781,7 @@ The Support Manager acts as the main interface between users facing issues or se
 The Support Manager ensures that users receive prompt and effective assistance, reinforcing their confidence in the platform's dedication to user satisfaction.
 
 ![Support Manager](./diagrams/components/support-manager.png)
-_Figure 16: Support Manager_
+_Figure 17: Support Manager_
 
 ### Social Sharing Manager
 
@@ -893,14 +893,14 @@ The Reporting & Analytics Manager plays an instrumental role in understanding us
 The Reporting & Analytics Manager not only enriches the RoadWarrior platform's business insights but also amplifies user engagement by providing them with valuable summaries and potentially offering tailored travel suggestions in the future.
 
 ![Reporting and Analytics Manager](./diagrams/components/reporting-and-analytics-manager.png)
-_Figure 17: Reporting and Analytics Manager_
+_Figure 19: Reporting and Analytics Manager_
 
 ## System Diagram
 
 The next diagram models a high-level overview of the system and its various components,and their functional interactions with one-another, as well as with external systems and services.
 
 ![System Diagram](./diagrams/system-diagram.png)
-_Figure 18: System Diagram_
+_Figure 20: System Diagram_
 
 ### System Diagram Walkthrough
 
@@ -924,7 +924,7 @@ _Figure 18: System Diagram_
 The next diagram models a sample deployment of the system on the Amazon Web Services (AWS) Platform. A brief overview of the involved AWS services follows, along with other major cloud alternatives.
 
 ![Deployment Diagram](./diagrams/deployment-diagram.png)
-_Figure 19: AWS Deployment Architecture_
+_Figure 21: AWS Deployment Architecture_
 
 ### Deployment Architecture Walkthrough
 
